@@ -2,6 +2,18 @@ const fs = require("fs");
 const path = require("path");
 const process = require("process");
 const dirname = process.cwd();
+fs.readdir(dirname, (err, files) => {
+  files.forEach(file => {
+    console.log(file);
+  });
+});
+
+fs.readdir(__dirname, (err, files) => {
+  files.forEach(file => {
+    console.log(file);
+  });
+});
+
 export default (req, res) => {
   try {
     const companywithid = JSON.parse(
