@@ -26,7 +26,7 @@ class Top extends React.Component {
     const { num, type } = match.params;
     this.setState({ num: num, type: type, loading: true }, () => {});
 
-    axios.get("api/previousdaystockdetails").then((s) => {
+    axios.get("/api/previousdaystockdetails").then((s) => {
       if (s.status === 200) {
         let companyStockDetails = s.data;
         if (type === "sell") {
