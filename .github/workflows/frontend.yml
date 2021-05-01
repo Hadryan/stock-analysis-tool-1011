@@ -1,0 +1,51 @@
+# This is a basic workflow to help you get started with Actions
+
+name: frontend
+
+# Controls when the action will run. 
+on:
+  push:
+     paths:
+      'frontend/**'
+    
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Node Version 14
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: '14'
+      - name : npm install and build
+        run: |
+          cd frontend
+          npm cache clean --force
+          npm install
+          npm install typescript
+          npm install gh-pages --save-dev
+          CI=false npm run build
+      - name: Setup Github Config
+        run: |
+          git config user.name "saikr789"
+          git config user.email "saikrishna.nama@msitprogram.net"
+      - name: Commit New Files
+        run: |
+          git pull origin main
+          git add frontend/build
+          git commit -m "frontend build"
+          git push origin main  
+      - name: Copy build to backend
+        run: |
+          cp -r frontend/build backend/build
+          git add backend/build
+          git commit -m "backend build"
+          git push origin main  
+      
