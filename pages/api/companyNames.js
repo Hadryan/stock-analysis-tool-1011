@@ -12,6 +12,6 @@ export default (req, res) => {
     res.send(companyNames);
   } catch (error) {
     console.log(error);
-    res.status(404).send({ error: path.join(dirname, "Data", "companywithid.json") + __dirname});
+    res.status(404).send({ error: error});
   }
 };
