@@ -11,6 +11,6 @@ export default (req, res) => {
     res.send(companyNames);
   } catch (error) {
     console.log(error);
-    res.status(404).send({ error: "error" });
+    res.status(404).send({ error: "error"});
   }
 };
