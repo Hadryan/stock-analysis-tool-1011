@@ -96,7 +96,7 @@ const readAndCompute = async function (days, rate) {
 
 const compute = async function (filename, companyname, days, rate) {
   return new Promise((resolve, reject) => {
-    let filepath = path.join(dirname, "Data", "Stock", filename);
+    let filepath = path.join(dirname, "Data", "GRStock", filename);
     if (fs.existsSync(filepath)) {
       let stream = fs.createReadStream(filepath);
       let nums = 0;
@@ -128,7 +128,7 @@ const computeForSingleCompany = async function (
   rate
 ) {
   return new Promise((resolve, reject) => {
-    let filepath = path.join(dirname, "Data", "Stock", filename);
+    let filepath = path.join(dirname, "Data", "GRStock", filename);
     if (fs.existsSync(filepath)) {
       let stream = fs.createReadStream(filepath);
       let nums = 0;
