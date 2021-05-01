@@ -8,10 +8,9 @@ export default (req, res) => {
       fs.readFileSync(path.join(dirname, "Data", "companywithid.json"), "utf8")
     );
     const companyNames = Object.keys(companywithid);
-    console.log(__dirname);
     res.send(companyNames);
   } catch (error) {
     console.log(error);
-    res.status(404).send({ error: error});
+    res.status(404).send({ error: "error"});
   }
 };
