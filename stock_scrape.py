@@ -243,6 +243,7 @@ def download_stocks(security_id):
 
 df = pd.read_csv("equity.csv")
 security_codes = df["Security Code"].values.tolist()
+security_codes.sort()
 
 pool = ThreadPool(multiprocessing.cpu_count())
 try:
