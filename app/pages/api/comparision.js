@@ -8,14 +8,11 @@ const axios = require("axios");
 
 export default async (req, res, next) => {
   try {
-    console.log(req.url, req.query);
     const query = req.query;
     const days = parseInt(query["days"]);
     const rate = parseFloat(query["rate"]) / 100;
     let company = req.query["company"];
     company = company.toUpperCase();
-    console.log(company, days, rate);
-
     const companywithidURL =
       "https://raw.githubusercontent.com/saikr789/stock-analysis-tool-1011/master/Data/companywithid.json";
     const grstockdetailsURL =
@@ -47,7 +44,7 @@ export default async (req, res, next) => {
                   numberOfDays: nums,
                   percentOfDays: ((nums / days) * 100).toFixed(3),
                   totalNumberOfDays: days,
-                  rate: rate,
+                  rate: rate * 100,
                 };
                 res.send(resp);
               }

@@ -7,7 +7,6 @@ const dirname = process.cwd();
 const axios = require("axios");
 
 export default async (req, res, next) => {
-  console.log(req.url);
   try {
     const companywithidURL =
       "https://raw.githubusercontent.com/saikr789/stock-analysis-tool-1011/master/Data/companywithid.json";
@@ -62,7 +61,6 @@ export default async (req, res, next) => {
           if (s.status === 200) {
             const companywithid = s.data;
             const code = parseInt(companywithid[company]);
-            console.log(code);
             axios
               .get(previousdaystockdetailsURL)
               .then((t) => {

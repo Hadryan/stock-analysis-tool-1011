@@ -21,7 +21,6 @@ export default (req, res, next) => {
             res.send(companies);
           } else {
             company = company.toUpperCase();
-            console.log(company);
             res.send(companies[company]);
           }
           res.send(companies);

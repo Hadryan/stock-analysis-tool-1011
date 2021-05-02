@@ -105,7 +105,7 @@ class Comparision extends React.Component {
           "/api/comparision?days=" +
             this.state.selectedTimePeriod +
             "&rate=" +
-            this.state.rate / 100 +
+            this.state.rate +
             "&company=" +
             company
         )

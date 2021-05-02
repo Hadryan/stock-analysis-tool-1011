@@ -10,6 +10,7 @@ import React from "react";
 import axios from "axios";
 import underscore from "underscore";
 import Dashboard from "./Dashboard";
+import Loader from "react-loader-spinner";
 
 const styles = (theme) => ({
   formControl: {
@@ -28,6 +29,7 @@ class CompanyDetails extends React.Component {
       companyDetails: [],
       companyCurrentDayStockDetails: [],
       selectedCompany: "",
+      loading: true,
       stockkeys: [
         "Date",
         "Open Price",
@@ -63,9 +65,9 @@ class CompanyDetails extends React.Component {
       .get("/api/previousdaystockdetails?company=" + company)
       .then((s) => {
         if (s.status === 200) {
-          this.setState({ stockdetails: s.data }, () => {});
+          this.setState({ stockdetails: s.data, loading: false }, () => {});
         } else {
-          this.setState({ stockdetails: [] }, () => {});
+          this.setState({ stockdetails: [], loading: false }, () => {});
         }
       })
       .catch((e) => {
@@ -90,22 +92,26 @@ class CompanyDetails extends React.Component {
               <Typography variant="h4">{this.state.selectedCompany}</Typography>
             </Paper>
             <Divider />
-            <Grid container>
-              {Object.keys(this.state.companyDetails).map((key) => {
-                if (this.state.companyDetails[key] === null) {
-                  return <span></span>;
-                }
-                let res = key + " : " + this.state.companyDetails[key];
-                return (
-                  <Chip
-                    color="primary"
-                    variant="outlined"
-                    label={res}
-                    style={{ margin: "5px" }}
-                  />
-                );
-              })}
-            </Grid>
+            {this.state.loading === true ? (
+              <Loader />
+            ) : (
+              <Grid container>
+                {Object.keys(this.state.companyDetails).map((key) => {
+                  if (this.state.companyDetails[key] === null) {
+                    return <span></span>;
+                  }
+                  let res = key + " : " + this.state.companyDetails[key];
+                  return (
+                    <Chip
+                      color="primary"
+                      variant="outlined"
+                      label={res}
+                      style={{ margin: "5px" }}
+                    />
+                  );
+                })}
+              </Grid>
+            )}
           </div>
         )}
         <Divider />
