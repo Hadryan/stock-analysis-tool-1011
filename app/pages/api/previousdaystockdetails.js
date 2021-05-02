@@ -1,9 +1,4 @@
-const fs = require("fs");
-const csv = require("fast-csv");
 const underscore = require("underscore");
-const path = require("path");
-const process = require("process");
-const dirname = process.cwd();
 const axios = require("axios");
 
 export default async (req, res, next) => {
@@ -23,7 +18,7 @@ export default async (req, res, next) => {
               .get(previousdaystockdetailsURL)
               .then((t) => {
                 if (t.status === 200) {
-                  let previousdaystockdetail = [];
+                  let previousdaystockdetails = [];
                   let rows = t.data.split("\n");
                   const header = rows[0].split(",");
                   for (let i = 1; i < rows.length; i++) {
@@ -36,12 +31,12 @@ export default async (req, res, next) => {
                       return result;
                     }, {});
                     result["company"] = companywithid[result["company"]];
-                    previousdaystockdetail.push(result);
+                    previousdaystockdetails.push(result);
                   }
-                  res.send(previousdaystockdetail);
+                  res.send(previousdaystockdetails);
                 }
               })
-              .then((error) => {
+              .catch((error) => {
                 console.log(error);
                 res.status(404).send({ error: "error" });
               });
@@ -83,7 +78,7 @@ export default async (req, res, next) => {
                   }
                 }
               })
-              .then((error) => {
+              .catch((error) => {
                 console.log(error);
                 res.status(404).send({ error: "error" });
               });

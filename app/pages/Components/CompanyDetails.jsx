@@ -8,7 +8,6 @@ import {
 } from "@material-ui/core";
 import React from "react";
 import axios from "axios";
-import underscore from "underscore";
 import Dashboard from "./Dashboard";
 import Loader from "react-loader-spinner";
 

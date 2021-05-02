@@ -1,9 +1,3 @@
-const fs = require("fs");
-const csv = require("fast-csv");
-const underscore = require("underscore");
-const path = require("path");
-const process = require("process");
-const dirname = process.cwd();
 const axios = require("axios");
 
 export default async (req, res, next) => {
@@ -39,14 +33,14 @@ export default async (req, res, next) => {
                     nums = nums + 1;
                   }
                 }
-                const resp = {
+                const response = {
                   company: company,
                   numberOfDays: nums,
                   percentOfDays: ((nums / days) * 100).toFixed(3),
                   totalNumberOfDays: days,
                   rate: rate * 100,
                 };
-                res.send(resp);
+                res.send(response);
               }
             })
             .then((error) => {

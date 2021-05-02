@@ -1,7 +1,3 @@
-const fs = require("fs");
-const path = require("path");
-const process = require("process");
-const dirname = process.cwd();
 const axios = require("axios");
 
 export default (req, res) => {

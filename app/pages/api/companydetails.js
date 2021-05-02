@@ -1,14 +1,8 @@
-const fs = require("fs");
-const csv = require("fast-csv");
-const path = require("path");
-const process = require("process");
-const dirname = process.cwd();
 const axios = require("axios");
-
 export default (req, res, next) => {
-  console.log(req.url, req.query);
-  let company = req.query["company"];
   try {
+    console.log(req.url, req.query);
+    let company = req.query["company"];
     const companydetailsURL =
       "https://raw.githubusercontent.com/saikr789/stock-analysis-tool-1011/master/Data/companies.json";
 
@@ -23,7 +17,6 @@ export default (req, res, next) => {
             company = company.toUpperCase();
             res.send(companies[company]);
           }
-          res.send(companies);
         } else {
           res.status(404).send({ error: "error" });
         }
