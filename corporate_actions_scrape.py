@@ -218,6 +218,6 @@ security_codes = df["Security Code"].values.tolist()
 security_codes.sort()
 for code in security_codes:
     try:
-        pdownload_corporate_actions(code)
+        download_corporate_actions(code)
     except:
         traceback.print_exc()
