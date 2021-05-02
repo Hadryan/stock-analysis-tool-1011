@@ -239,8 +239,6 @@ def download_stocks(security_id):
     subprocess.run(["git","pull","origin","master"])
     subprocess.run(["git","push","origin","master"])
     
-    return stock
-
 df = pd.read_csv("equity.csv")
 security_codes = df["Security Code"].values.tolist()
 security_codes.sort()
