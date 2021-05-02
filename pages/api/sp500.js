@@ -4,38 +4,41 @@ const underscore = require("underscore");
 const path = require("path");
 const process = require("process");
 const dirname = process.cwd();
+const axios = require("axios");
 
-export default async (req, res, next) => {
+export default (req, res, next) => {
   try {
-    await compute()
+    const sp500URL =
+      "https://raw.githubusercontent.com/saikr789/stock-analysis-tool-1011/master/Data/sp500.csv";
+    axios
+      .get(sp500URL)
       .then((s) => {
-        res.send(s);
+        if (s.status === 200) {
+          let sp500details = [];
+          let rows = s.data.split("\n");
+          const header = rows[0].split(",");
+          for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+            const cols = row.split(",");
+            var result = cols.reduce(function (result, field, index) {
+              result[
+                header[index].replace(/(\r\n|\n|\r)/gm, "")
+              ] = field.replace(/(\r\n|\n|\r)/gm, "");
+              return result;
+            }, {});
+            sp500details.push(result);
+          }
+          res.send(sp500details);
+        } else {
+          res.status(404).send({ error: "error" });
+        }
       })
-      .catch((e) => {
-        console.log(e);
+      .catch((error) => {
+        console.log(error);
         res.status(404).send({ error: "error" });
       });
   } catch (error) {
     console.log(error);
     res.status(404).send({ error: "error" });
   }
-};
-
-const compute = async function () {
-  return new Promise((resolve, reject) => {
-    try {
-      let stream = fs.createReadStream(path.join(dirname, "Data", "sp500.csv"));
-      let mydata = [];
-      csv
-        .parseStream(stream, { headers: true })
-        .on("data", (data) => {
-          mydata.push(data);
-        })
-        .on("end", () => {
-          resolve(mydata);
-        });
-    } catch (error) {
-      reject("error");
-    }
-  });
 };

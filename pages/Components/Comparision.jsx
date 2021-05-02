@@ -102,7 +102,7 @@ class Comparision extends React.Component {
         });
       await axios
         .get(
-          "/api/topCompanies?days=" +
+          "/api/comparision?days=" +
             this.state.selectedTimePeriod +
             "&rate=" +
             this.state.rate / 100 +

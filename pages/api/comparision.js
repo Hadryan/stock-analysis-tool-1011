@@ -8,12 +8,18 @@ const axios = require("axios");
 
 export default async (req, res, next) => {
   try {
+    console.log(req.url, req.query);
+    const query = req.query;
+    const days = parseInt(query["days"]);
+    const rate = parseFloat(query["rate"]) / 100;
     let company = req.query["company"];
     company = company.toUpperCase();
+    console.log(company, days, rate);
+
     const companywithidURL =
       "https://raw.githubusercontent.com/saikr789/stock-analysis-tool-1011/master/Data/companywithid.json";
-    const stockdetailsURL =
-      "https://raw.githubusercontent.com/saikr789/stock-analysis-tool-1011/master/Data/Stock";
+    const grstockdetailsURL =
+      "https://raw.githubusercontent.com/saikr789/stock-analysis-tool-1011/master/Data/GRStock";
     axios
       .get(companywithidURL)
       .then((s) => {
@@ -21,24 +27,29 @@ export default async (req, res, next) => {
           const companywithid = s.data;
           const code = parseInt(companywithid[company]);
           axios
-            .get(stockdetailsURL + "/" + code + ".csv")
+            .get(grstockdetailsURL + "/" + "gr" + code + ".csv")
             .then((t) => {
               if (t.status === 200) {
+                let nums = 0;
                 let stockdetails = [];
                 let rows = t.data.split("\n");
                 const header = rows[0].split(",");
-                for (let i = 1; i < rows.length; i++) {
+                const cpgr = header.indexOf("Close Price GR");
+                for (let i = 1; i < days + 1; i++) {
                   const row = rows[i];
                   const cols = row.split(",");
-                  var result = cols.reduce(function (result, field, index) {
-                    result[
-                      header[index].replace(/(\r\n|\n|\r)/gm, "")
-                    ] = field.replace(/(\r\n|\n|\r)/gm, "");
-                    return result;
-                  }, {});
-                  stockdetails.push(result);
+                  if (cols[cpgr] > rate) {
+                    nums = nums + 1;
+                  }
                 }
-                res.send(stockdetails);
+                const resp = {
+                  company: company,
+                  numberOfDays: nums,
+                  percentOfDays: ((nums / days) * 100).toFixed(3),
+                  totalNumberOfDays: days,
+                  rate: rate,
+                };
+                res.send(resp);
               }
             })
             .then((error) => {

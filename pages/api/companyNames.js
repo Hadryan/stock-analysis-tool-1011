@@ -2,15 +2,28 @@ const fs = require("fs");
 const path = require("path");
 const process = require("process");
 const dirname = process.cwd();
+const axios = require("axios");
+
 export default (req, res) => {
   try {
-    const companywithid = JSON.parse(
-      fs.readFileSync(path.join(dirname, "Data", "companywithid.json"), "utf8")
-    );
-    const companyNames = Object.keys(companywithid);
-    res.send(companyNames);
+    const companywithidURL =
+      "https://raw.githubusercontent.com/saikr789/stock-analysis-tool-1011/master/Data/companywithid.json";
+    axios
+      .get(companywithidURL)
+      .then((s) => {
+        if (s.status === 200) {
+          const companyNames = Object.keys(s.data);
+          res.send(companyNames);
+        } else {
+          res.status(404).send({ error: "error" });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(404).send({ error: "error" });
+      });
   } catch (error) {
     console.log(error);
-    res.status(404).send({ error: "error"});
+    res.status(404).send({ error: "error" });
   }
 };
