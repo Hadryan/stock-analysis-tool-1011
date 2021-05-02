@@ -22,13 +22,13 @@ jobs:
     - name: Run Stock Scrape
       run: |
         python stock_scrape.py
-#     - name: Setup Github Config
-#       run: |
-#         git config user.name "saikr789"
-#         git config user.email "saikrishna.nama@msitprogram.net"
-#     - name: Commiting New Files
-#       run: |
-#         git pull origin main
-#         git add Data/Stock
-#         git commit -m "stock scrape data"
-#         git push origin main
+    - name: Setup Github Config
+      run: |
+        git config user.name "saikr789"
+        git config user.email "saikrishna.nama@msitprogram.net"
+    - name: Commiting New Files
+      run: |
+        git pull origin master
+        git add Data/Stock
+        git commit -m "stock scrape data"
+        git push origin master
