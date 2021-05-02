@@ -28,7 +28,7 @@ jobs:
         git config user.email "saikrishna.nama@msitprogram.net"
     - name: Commiting New Files
       run: |
-        git pull origin main
+        git pull origin master
         git add Data/Revenue
         git commit -m "Revenue Profit scrape data"
-        git push origin main
+        git push origin master
