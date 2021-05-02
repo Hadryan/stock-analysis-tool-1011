@@ -33,12 +33,13 @@ def login_kaggle(driver):
     time.sleep(3)
     username = "/html/body/main/div/div[1]/div/form/div/div[1]/div/div/input"
     driver.find_element_by_xpath(username).send_keys("saikrishnanama")
+    time.sleep(1)
     password = '/html/body/main/div/div[1]/div/form/div/div[2]/div/div/input'
     driver.find_element_by_xpath(password).send_keys("nama@007")
-
+    time.sleep(1)
     submit = "/html/body/main/div[1]/div[1]/div/form/div[2]/div[3]/button"
     driver.find_element_by_xpath(submit).click()
-
+    time.sleep(1)
 
 def kernel_names(driver):
     driver.get("https://www.kaggle.com/saikrishnanama/code")
@@ -65,22 +66,26 @@ def run_notebook(driver, name):
     try:
         continueedit = "/html/body/div[1]/div/div/div[5]/div[2]/div[4]/div[1]/div/div[2]/button[2]/"
         driver.find_element_by_xpath(continueedit).click()
+        time.sleep(1)
     except:
         pass
 
     saveversion = "/html/body/div[1]/div/div/div[5]/div[2]/div[1]/div[2]/div[4]/button"
     driver.find_element_by_xpath(saveversion).click()
-    time.sleep(1)
+    time.sleep(2)
 
     advancedsettings = "/html/body/div[1]/div/div/div[5]/div[2]/div[4]/div[1]/div/div[2]/div/button"
     driver.find_element_by_xpath(advancedsettings).click()
-
+    time.sleep(1)
+    
     saveoutput = "/html/body/div[1]/div/div/div[5]/div[2]/div[4]/div[1]/div/div[1]/div[1]/div[2]/label/div"
     driver.find_element_by_xpath(saveoutput).click()
-
+    time.sleep(1)
+    
     saveadv = "/html/body/div[1]/div/div/div[5]/div[2]/div[4]/div[1]/div/div[2]/button[2]"
     driver.find_element_by_xpath(saveadv).click()
-
+    time.sleep(1)
+    
     savever = "/html/body/div[1]/div/div/div[5]/div[2]/div[4]/div[1]/div/div[2]/button[1]"
     driver.find_element_by_xpath(savever).click()
     time.sleep(3)
@@ -92,6 +97,8 @@ if __name__ == "__main__":
         login_kaggle(driver)
         time.sleep(3)
         run_notebook(driver, "feature-creation-1")
+        time.sleep(2)
+        run_notebook(driver, "feature-creation-2")
         driver.quit()
     except:
         traceback.print_exc()
