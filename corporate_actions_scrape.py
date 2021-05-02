@@ -14,6 +14,10 @@ from multiprocessing.pool import ThreadPool
 import traceback
 import subprocess
 
+subprocess.run(["git","config","user.email","saikrishna.nama@msitprogram.net"])  
+subprocess.run(["git","config","user.name","saikr789"]) 
+subprocess.run(["git","pull","origin","master"])
+
 def download_corporate_actions(security_id):
     """
     Downloads the corporate actions of the give security id.
@@ -203,7 +207,12 @@ def download_corporate_actions(security_id):
                 'BC Start Date', 'BC End Date', 'ND Start Date', 'ND End Date', 'Actual Payment Date']
         df = pd.DataFrame(columns=cols)
         df.to_csv(os.path.join(path, str(security_id)+".csv"), index=None)
-
+        
+    subprocess.run(["git","add",os.path.join(path, str(security_id)+".csv")])
+    subprocess.run(["git","commit","-m","Corporate Actions "+str(code)])
+    subprocess.run(["git","pull","origin","master"])
+    subprocess.run(["git","push","origin","master"])
+    
 df = pd.read_csv("equity.csv")
 security_codes = df["Security Code"].values.tolist()
 

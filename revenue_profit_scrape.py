@@ -9,7 +9,7 @@ import subprocess
 
 subprocess.run(["git","config","user.email","saikrishna.nama@msitprogram.net"])  
 subprocess.run(["git","config","user.name","saikr789"]) 
-subprocess.run(["git","pull","origin","main"])
+subprocess.run(["git","pull","origin","master"])
 
 def download_revenue_profit(code, name):
     """
@@ -129,10 +129,10 @@ def download_revenue_profit(code, name):
                 traceback.print_exc()
         code_df.to_csv(os.path.join(path, str(code)+".csv"), index=None)
         
-        subprocess.run(["git","add",os.path.join(path, str(code)+".csv")])
+        subprocess.run(["git","add",os.path.join(path, str(security_id)+".csv")])
         subprocess.run(["git","commit","-m","Revenue Profit "+str(code)])
-        subprocess.run(["git","pull","origin","main"])
-        subprocess.run(["git","push","origin","main"])
+        subprocess.run(["git","pull","origin","master"])
+        subprocess.run(["git","push","origin","master"])
         
     driver = create_driver()
     download()
@@ -141,12 +141,11 @@ def download_revenue_profit(code, name):
 df = pd.read_csv("equity.csv")
 for index, row in df.iterrows():
   try:
-    
     code = row["Security Code"]
     name = row["Security Id"]
-    print(code, name)
     if os.path.exists(os.path.join(os.path.join(os.getcwd(), os.path.join("Data", "Revenue")),str(code)+".csv")):
+        print(code, name)
         continue
     download_revenue_profit(code, name)
   except:
-    pass
+    traceback.print_exc()

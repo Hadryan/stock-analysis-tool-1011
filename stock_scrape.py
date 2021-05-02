@@ -16,7 +16,7 @@ import traceback
 import subprocess
 subprocess.run(["git","config","user.email","saikrishna.nama@msitprogram.net"])  
 subprocess.run(["git","config","user.name","saikr789"]) 
-subprocess.run(["git","pull","origin","main"])
+subprocess.run(["git","pull","origin","master"])
 
 def download_stocks(security_id):
     """
@@ -236,8 +236,8 @@ def download_stocks(security_id):
     
     subprocess.run(["git","add",os.path.join(path, str(security_id)+".csv")])
     subprocess.run(["git","commit","-m","Stock "+str(security_id)])
-    subprocess.run(["git","pull","origin","main"])
-    subprocess.run(["git","push","origin","main"])
+    subprocess.run(["git","pull","origin","master"])
+    subprocess.run(["git","push","origin","master"])
     
     return stock
 
