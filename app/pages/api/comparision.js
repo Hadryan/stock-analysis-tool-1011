@@ -43,7 +43,7 @@ export default async (req, res, next) => {
                 res.send(response);
               }
             })
-            .then((error) => {
+            .catch((error) => {
               console.log(error);
               res.status(404).send({ error: "error" });
             });
