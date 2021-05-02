@@ -3,7 +3,6 @@
 
 name: Rvenue Profit Scrape Work Flow
 on:
-  push:
   schedule:
     - cron: "30 12 1 */3 *"
 jobs:
