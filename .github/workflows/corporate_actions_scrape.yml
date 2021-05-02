@@ -3,6 +3,7 @@
 
 name: Corporate Actions Scrape Work Flow
 on:
+  push:
   schedule:
     - cron: "30 12 1 * *"
 jobs:
