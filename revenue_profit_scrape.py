@@ -129,7 +129,7 @@ def download_revenue_profit(code, name):
                 traceback.print_exc()
         code_df.to_csv(os.path.join(path, str(code)+".csv"), index=None)
         
-        subprocess.run(["git","add",os.path.join(path, str(code)+".csv")])
+        subprocess.run(["git","add","Data/Revenue/"+str(code)+".csv"])
         subprocess.run(["git","commit","-m","Revenue Profit "+str(code)])
         subprocess.run(["git","pull","origin","main"])
         subprocess.run(["git","push","origin","main"])
