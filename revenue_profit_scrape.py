@@ -141,12 +141,11 @@ def download_revenue_profit(code, name):
 df = pd.read_csv("equity.csv")
 for index, row in df.iterrows():
   try:
-    
     code = row["Security Code"]
     name = row["Security Id"]
-    print(code, name)
     if os.path.exists(os.path.join(os.path.join(os.getcwd(), os.path.join("Data", "Revenue")),str(code)+".csv")):
+        print(code, name)
         continue
     download_revenue_profit(code, name)
   except:
-    pass
+    traceback.print_exc()
