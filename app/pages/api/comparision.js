@@ -27,7 +27,7 @@ export default async (req, res, next) => {
                 const header = rows[0].split(",");
                 const cpgr = header.indexOf("Close Price GR");
                 const availdays = Math.min(rows.length, days);
-                for (let i = 1; i < availdayss; i++) {
+                for (let i = 1; i < availdays; i++) {
                   const row = rows[i];
                   const cols = row.split(",");
                   if (cols[cpgr] > rate) {
