@@ -14,8 +14,8 @@ from multiprocessing.pool import ThreadPool
 import traceback
 import subprocess
 
-subprocess.run(["git","config","user.email","saikrishna.nama@msitprogram.net"])  
-subprocess.run(["git","config","user.name","saikr789"]) 
+subprocess.run(["git","config","--global","user.email","saikrishna.nama@msitprogram.net"])  
+subprocess.run(["git","config","--global","user.name","saikr789"]) 
 subprocess.run(["git","pull","origin","master"])
 
 def download_corporate_actions(security_id):
@@ -215,11 +215,9 @@ def download_corporate_actions(security_id):
     
 df = pd.read_csv("equity.csv")
 security_codes = df["Security Code"].values.tolist()
-
-pool = ThreadPool(multiprocessing.cpu_count())
-
-try:
-    pool.map(download_corporate_actions,security_codes)
-except:
-    traceback.print_exc()
-    
+security_codes.sort()
+for code in security_codes:
+    try:
+        download_corporate_actions(code)
+    except:
+        traceback.print_exc()

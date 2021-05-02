@@ -2,9 +2,8 @@ import pandas as pd
 import os
 import subprocess
 
-subprocess.run(["git", "config", "user.email",
-               "saikrishna.nama@msitprogram.net"])
-subprocess.run(["git", "config", "user.name", "saikr789"])
+subprocess.run(["git", "config","--global", "user.email", "saikrishna.nama@msitprogram.net"])
+subprocess.run(["git", "config","--global", "user.name", "saikr789"])
 subprocess.run(["git", "pull", "origin", "master"])
 
 path = os.path.join(os.getcwd(), "Data", "Stock")
