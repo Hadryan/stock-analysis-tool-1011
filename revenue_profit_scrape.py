@@ -7,8 +7,8 @@ from bs4 import BeautifulSoup
 import traceback
 import subprocess
 
-subprocess.run(["git","config","user.email","saikrishna.nama@msitprogram.net"])  
-subprocess.run(["git","config","user.name","saikr789"]) 
+subprocess.run(["git","config","--global","user.email","saikrishna.nama@msitprogram.net"])  
+subprocess.run(["git","config","--global","user.name","saikr789"]) 
 subprocess.run(["git","pull","origin","master"])
 
 def download_revenue_profit(code, name):
