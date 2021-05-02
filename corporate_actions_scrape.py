@@ -216,10 +216,8 @@ def download_corporate_actions(security_id):
 df = pd.read_csv("equity.csv")
 security_codes = df["Security Code"].values.tolist()
 
-pool = ThreadPool(multiprocessing.cpu_count())
-
-try:
-    pool.map(download_corporate_actions,security_codes)
-except:
-    traceback.print_exc()
-    
+for code in security_codes:
+    try:
+        pdownload_corporate_actions(code)
+    except:
+        traceback.print_exc()
