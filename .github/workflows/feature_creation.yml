@@ -25,8 +25,8 @@ jobs:
    
     - name: Setup Github Config
       run: |
-        git config user.name "saikr789"
-        git config user.email "saikrishna.nama@msitprogram.net"
+        git config --global user.name "saikr789"
+        git config --global user.email "saikrishna.nama@msitprogram.net"
     - name: Commiting New Files
       run: |
         git pull origin master
