@@ -216,7 +216,7 @@ def download_corporate_actions(security_id):
 df = pd.read_csv("equity.csv")
 security_codes = df["Security Code"].values.tolist()
 security_codes.sort()
-for code in security_codes[698:]:
+for code in security_codes:
     try:
         download_corporate_actions(code)
     except:
