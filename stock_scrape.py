@@ -249,8 +249,8 @@ security_codes.sort()
 for code in security_codes:
     try:
         path = os.path.join(os.getcwd(), "Data", "Stock")
-        if os.path.exists(os.path.join(path, str(code)+"csv")):
-            df = pd.read_csv(os.path.join(path, str(code)+"csv"))
+        if os.path.exists(os.path.join(path, str(code)+".csv")):
+            df = pd.read_csv(os.path.join(path, str(code)+".csv"))
             ref = datetime.datetime.now() - datetime.timedelta(days=1)
             if df.iloc[0]['Date'] == str(ref.date()):
                 continue
