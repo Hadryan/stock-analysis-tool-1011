@@ -3,6 +3,7 @@
 
 name: Stock Scrape Work Flow
 on:
+  push:
   schedule:
     - cron: "30 12 * * *"
 jobs:
