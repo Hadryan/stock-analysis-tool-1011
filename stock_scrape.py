@@ -251,8 +251,10 @@ for code in security_codes:
         path = os.path.join(os.getcwd(), "Data", "Stock")
         if os.path.exists(os.path.join(path, str(code)+".csv")):
             df = pd.read_csv(os.path.join(path, str(code)+".csv"))
-            ref = datetime.datetime.now() - datetime.timedelta(days=1)
-            if df.iloc[0]['Date'] == str(ref.date()):
+            df["Date"] = pd.to_datetime(df["Date"])
+            start = datetime.datetime.now() - datetime.timedelta(days=1)
+            start = start.date()
+            if df["Date"].loc[0] == start:
                 continue
             else:
                 download_stocks(code)
