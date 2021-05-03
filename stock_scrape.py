@@ -14,9 +14,11 @@ from multiprocessing.pool import ThreadPool
 import traceback
 
 import subprocess
-subprocess.run(["git","config","--global","user.email","saikrishna.nama@msitprogram.net"])  
-subprocess.run(["git","config","--global","user.name","saikr789"]) 
-subprocess.run(["git","pull","origin","master"])
+subprocess.run(["git", "config", "--global", "user.email",
+               "saikrishna.nama@msitprogram.net"])
+subprocess.run(["git", "config", "--global", "user.name", "saikr789"])
+subprocess.run(["git", "pull", "origin", "master"])
+
 
 def download_stocks(security_id):
     """
@@ -70,9 +72,9 @@ def download_stocks(security_id):
 
     if not os.path.exists(path):
         os.makedirs("Data/Stock")
-     
+
     security_id = str(security_id)
-    
+
     def convert_date_to_unix_timestamp(stock_df):
         """
         Adds a new Unix Date column to the given dataframe
@@ -233,19 +235,29 @@ def download_stocks(security_id):
     stock = stock.dropna(how='all')
     stock = convert_date_to_unix_timestamp(stock)
     stock.to_csv(os.path.join(path, str(security_id)+".csv"), index=None)
-    
-    subprocess.run(["git","add",os.path.join(path, str(security_id)+".csv")])
-    subprocess.run(["git","commit","-m","Stock "+str(security_id)])
-    subprocess.run(["git","pull","origin","master"])
-    subprocess.run(["git","push","origin","master"])
-    
+
+    subprocess.run(["git", "add", os.path.join(path, str(security_id)+".csv")])
+    subprocess.run(["git", "commit", "-m", "Stock "+str(security_id)])
+    subprocess.run(["git", "pull", "origin", "master"])
+    subprocess.run(["git", "push", "origin", "master"])
+
+
 df = pd.read_csv("equity.csv")
 security_codes = df["Security Code"].values.tolist()
 security_codes.sort()
 
 for code in security_codes:
     try:
-        download_stocks(code)
+        path = os.path.join(os.getcwd(), "Data", "Stock")
+        if os.path.exists(os.path.join(path, str(code)+"csv")):
+            df = pd.read_csv(os.path.join(path, str(code)+"csv"))
+            ref = datetime.datetime.now() - datetime.timedelta(days=1)
+            if df.iloc[0]['Date'] == str(ref.date()):
+                continue
+            else:
+                download_stocks(code)
+        else:
+            download_stocks(code)
     except:
         pass
 # pool = ThreadPool(multiprocessing.cpu_count())
