@@ -243,8 +243,13 @@ df = pd.read_csv("equity.csv")
 security_codes = df["Security Code"].values.tolist()
 security_codes.sort()
 
-pool = ThreadPool(multiprocessing.cpu_count())
-try:
-    pool.map(download_stocks,security_codes)
-except:
-    traceback.print_exc()
+for code in security_codes:
+    try:
+        download_stocks(code)
+    except:
+        pass
+# pool = ThreadPool(multiprocessing.cpu_count())
+# try:
+#     pool.map(download_stocks,security_codes)
+# except:
+#     traceback.print_exc()
