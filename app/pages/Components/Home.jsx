@@ -3,9 +3,10 @@ import Drawer from "@material-ui/core/Drawer";
 import { withStyles } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import React from "react";
-
+import { Typography } from "@material-ui/core";
 import { Route, Switch, withRouter, useHistory } from "react-router-dom";
 import About from "./About";
+
 import CompanyDetails from "./CompanyDetails";
 import Comparision from "./Comparision";
 import Login from "./Login";
@@ -16,8 +17,8 @@ import Revenue from "./Revenue";
 import Sectors from "./Sectors";
 import SideBar from "./SideBar";
 import SP500 from "./SP500";
-import { Typography } from "@material-ui/core";
 import Top from "./Top";
+import Simulation from "./Simulation";
 const drawerWidth = 300;
 const styles = (theme) => ({
   root: {
@@ -135,6 +136,7 @@ class Home extends React.Component {
               />
               <Route exact path="/sp500" component={SP500} />
               <Route exact path="/comparision" component={Comparision} />
+              <Route exact path="/simulation" component={Simulation} />
               <Route component={PageNotFound} />
             </Switch>
           </main>

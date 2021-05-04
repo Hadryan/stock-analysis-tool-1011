@@ -93,6 +93,13 @@ class NavigationBar extends React.Component {
           </NavLink>
         </Grid>
         <Grid item>
+          <NavLink to="/simulation" className={classes.link}>
+            <Typography className={classes.grid} variant="h4">
+              Simulation
+            </Typography>
+          </NavLink>
+        </Grid>
+        <Grid item>
           <Autocomplete
             style={{ width: "200px" }}
             value={this.state.selectedCompany}
