@@ -248,11 +248,7 @@ security_codes.sort()
 
 for code in security_codes:
     try:
-        path = os.path.join(os.getcwd(), "Data", "Stock")
-        if os.path.exists(os.path.join(path, str(code)+".csv")):
-            pass
-        else:
-            download_stocks(code)
+        download_stocks(code)
     except:
         pass
 # pool = ThreadPool(multiprocessing.cpu_count())
