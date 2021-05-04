@@ -248,18 +248,7 @@ security_codes.sort()
 
 for code in security_codes:
     try:
-        path = os.path.join(os.getcwd(), "Data", "Stock")
-        if os.path.exists(os.path.join(path, str(code)+".csv")):
-            df = pd.read_csv(os.path.join(path, str(code)+".csv"))
-            df["Date"] = pd.to_datetime(df["Date"])
-            start = datetime.datetime.now() - datetime.timedelta(days=1)
-            start = start.date()
-            if df["Date"].loc[0] == start:
-                continue
-            else:
-                download_stocks(code)
-        else:
-            download_stocks(code)
+        download_stocks(code)
     except:
         pass
 # pool = ThreadPool(multiprocessing.cpu_count())
