@@ -252,7 +252,8 @@ class Simulation extends React.Component {
           </Grid>
           <Grid item>
             <TextField
-              style={{ paddingTop: "20px" }}
+              style={{ paddingTop: "15px" }}
+              variant="outlined"
               id="date"
               label="start date"
               type="date"
@@ -297,6 +298,7 @@ class Simulation extends React.Component {
           </Grid>
           <Grid item>
             <Button
+              style={{ width: "100%", marginTop: "15px" }}
               variant="outlined"
               size="large"
               onClick={this.onClickSubmit}

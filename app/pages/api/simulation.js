@@ -65,80 +65,94 @@ export default async (req, res, next) => {
 const compute = async (filepath, date, days, investment) => {
   return new Promise((resolve, reject) => {
     try {
-      let response = [];
-      let stream = fs.createReadStream(filepath);
-      let start = false;
-      let num = 0;
-      let invested = false;
-      let shares = 0;
-      let enddata = {};
-      csv
-        .parseStream(stream, { headers: true })
-        .on("data", (data) => {
-          enddata = data;
-          const cur = moment(data["date"], "YYYY-MM-DD").unix();
-          if (cur >= date) {
-            start = true;
-          }
-          if (start) {
-            num = num + 1;
-            if (data["invest"] === "True") {
-              if (invested == false) {
-                shares = investment / parseFloat(data["close"]);
-                invested = true;
-                response.push({
-                  investment: investment,
-                  entrydate: data["date"],
-                  shares: shares,
-                });
+      if (fs.existsSync(filepath)) {
+        let response = [];
+        let stream = fs.createReadStream(filepath);
+        let start = false;
+        let num = 0;
+        let invested = false;
+        let shares = 0;
+        let enddata = {};
+        csv
+          .parseStream(stream, { headers: true })
+          .on("data", (data) => {
+            enddata = data;
+            const cur = moment(data["date"], "YYYY-MM-DD").unix();
+            if (cur >= date) {
+              start = true;
+            }
+            if (start) {
+              num = num + 1;
+              if (data["invest"] === "True") {
+                if (invested == false) {
+                  if (investment < parseFloat(data["close"])) {
+                    response.push({
+                      investment: "not enough",
+                    });
+                  } else {
+                    shares = Math.floor(investment / parseFloat(data["close"]));
+                    invested = true;
+                    response.push({
+                      investment: investment,
+                      entrydate: data["date"],
+                      shares: shares,
+                      close: parseFloat(data["close"]),
+                    });
+                  }
+                }
+              }
+              if (data["exit"] === "True") {
+                if (invested) {
+                  investment = parseFloat(data["close"]) * shares;
+                  response.push({
+                    investment: investment,
+                    exitdate: data["date"],
+                    shares: shares,
+                    close: parseFloat(data["close"]),
+                  });
+                  invested = false;
+                }
+              }
+              if (num == days) {
+                if (invested) {
+                  investment = parseFloat(data["close"]) * shares;
+                  invested = false;
+                  response.push({
+                    investment: investment,
+                    exitdate: data["date"],
+                    shares: shares,
+                    close: parseFloat(data["close"]),
+                  });
+                }
+                throw "reached";
               }
             }
-            if (data["exit"] === "True") {
-              if (invested) {
-                investment = parseFloat(data["close"]) * shares;
-                response.push({
-                  investment: investment,
-                  exitdate: data["date"],
-                  shares: shares,
-                });
-                invested = false;
-              }
+          })
+          .on("end", () => {
+            console.log("end");
+            if (invested) {
+              investment = parseFloat(enddata["close"]) * shares;
+              invested = false;
+              response.push({
+                profit: investment,
+                exitdate: enddata["date"],
+                shares: shares,
+                close: parseFloat(data["close"]),
+              });
             }
-            if (num == days) {
-              if (invested) {
-                investment = parseFloat(data["close"]) * shares;
-                invested = false;
-                response.push({
-                  investment: investment,
-                  exitdate: data["date"],
-                  shares: shares,
-                });
-              }
-              throw "reached";
-            }
-          }
-        })
-        .on("end", () => {
-          console.log("end");
-          if (invested) {
-            investment = parseFloat(enddata["close"]) * shares;
-            invested = false;
-            response.push({
-              profit: investment,
-              exitdate: enddata["date"],
-              shares: shares,
-            });
-          }
-          resolve(response);
-        })
-        .on("error", (e) => {
-          if (e === "reached") {
             resolve(response);
-          } else {
-            reject({});
-          }
-          console.log(e);
-        });
+          })
+          .on("error", (e) => {
+            if (e === "reached") {
+              resolve(response);
+            } else {
+              reject({});
+            }
+            console.log(e);
+          });
+      } else {
+        reject({});
+      }
     } catch (error) {
       console.log(error);
       reject({});
@@ -175,13 +189,22 @@ const computeFromURL = async (simulationURL, date, days, investment) => {
                 num = num + 1;
                 if (data[investindex] === "True") {
                   if (invested == false) {
-                    shares = investment / parseFloat(data[closeindex]);
-                    invested = true;
-                    response.push({
-                      investment: investment,
-                      entrydate: data[dateindex],
-                      shares: shares,
-                    });
+                    if (investment < parseFloat(data["close"])) {
+                      response.push({
+                        investment: "not enough",
+                      });
+                    } else {
+                      shares = Math.floor(
+                        investment / parseFloat(data["close"])
+                      );
+                      invested = true;
+                      response.push({
+                        investment: investment,
+                        entrydate: data["date"],
+                        shares: shares,
+                        close: parseFloat(data["close"]),
+                      });
+                    }
                   }
                 }
                 if (data[exitindex] === "True") {
@@ -222,6 +245,8 @@ const computeFromURL = async (simulationURL, date, days, investment) => {
             }
 
             resolve(response);
+          } else {
+            reject({});
           }
         })
         .catch((e) => {
