@@ -216,6 +216,7 @@ const computeFromURL = async (simulationURL, date, days, investment) => {
                       investment: investment.toFixed(3),
                       exitdate: data[dateindex],
                       shares: shares,
+                      close: parseFloat(data[closeindex]),
                     });
                     invested = false;
                   }
