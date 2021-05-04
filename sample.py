@@ -2,7 +2,6 @@ import datetime
 import os
 import multiprocessing
 import subprocess
-import pandas as pd
 print(datetime.datetime.now())
 print(os.getcwd())
 print(multiprocessing.cpu_count())
