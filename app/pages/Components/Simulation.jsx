@@ -212,10 +212,7 @@ class Simulation extends React.Component {
       .get("/api/simulation?" + params)
       .then((s) => {
         if (s.status === 200) {
-          let res = s.data;
-          let earnings =
-            res[res.length - 1]["investment"] - res[0]["investment"];
-          this.setState({ response: s.data, earnings: earnings }, () => {});
+          this.setState({ response: s.data }, () => {});
         }
       })
       .catch((e) => {
