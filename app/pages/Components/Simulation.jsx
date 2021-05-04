@@ -187,7 +187,6 @@ class Simulation extends React.Component {
       investment: 1,
       startdate: "2017-03-10",
       response: [],
-      earnings: 0,
     };
   }
 
@@ -328,14 +327,6 @@ class Simulation extends React.Component {
             </div>
           );
         })}
-        {this.state.earnings !== 0 ? (
-          <Typography>
-            {"total earnings "}
-            {this.state.earnings}
-          </Typography>
-        ) : (
-          <span />
-        )}
       </React.Fragment>
     );
   }
