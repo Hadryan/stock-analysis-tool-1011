@@ -144,7 +144,7 @@ for index, row in df.iterrows():
     code = row["Security Code"]
     name = row["Security Id"]
     path = os.path.join(os.getcwd(), os.path.join("Data", "Revenue"))
-    if os.path.exists(path,str(code)+".csv")):
+    if os.path.exists(path,str(code)+".csv"):
         continue
     else:
         download_revenue_profit(code, name)
