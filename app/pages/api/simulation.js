@@ -204,7 +204,7 @@ const computeFromURL = async (simulationURL, date, days, investment) => {
                         close: parseFloat(data[closeindex]),
                       });
                       investment =
-                        investment + parseFloat(data[closeindex]) * shares;
+                        investment - parseFloat(data[closeindex]) * shares;
                     }
                   }
                 }
