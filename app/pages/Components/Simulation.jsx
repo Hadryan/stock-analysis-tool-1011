@@ -233,7 +233,14 @@ class Simulation extends React.Component {
               style={{ width: "200px" }}
               value={this.state.selectedCompany}
               onChange={(e, val) => {
-                this.setState({ selectedCompany: val }, () => {});
+                if (val == null) {
+                  this.setState(
+                    { response: [], selectedCompany: "" },
+                    () => {}
+                  );
+                } else {
+                  this.setState({ selectedCompany: val }, () => {});
+                }
               }}
               id="search for companies"
               freeSolo

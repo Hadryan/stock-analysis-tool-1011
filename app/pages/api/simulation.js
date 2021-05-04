@@ -11,33 +11,18 @@ export default async (req, res, next) => {
       "https://raw.githubusercontent.com/saikr789/stock-analysis-tool-1011/master/Data/companywithid.json";
     let simulationURL =
       "https://raw.githubusercontent.com/saikr789/stock-analysis-tool-1011/master/Data/simulation/secid_Next_30_days.csv";
-    console.log(req.url, req.query);
     const date = moment(req.query["date"], "YYYY-MM-DD").unix();
     const days = parseInt(req.query["days"]);
     const investment = parseFloat(req.query["investment"]);
     const company = req.query["company"].toUpperCase();
-    console.log(date, days, investment, company);
     axios
       .get(companywithidURL)
       .then(async (s) => {
         if (s.status === 200) {
           const resp = s.data;
           const secid = resp[company];
-          // await computeFromURL(
-          //   simulationURL.replace("secid", secid),
-          //   date,
-          //   days,
-          //   investment
-          // )
-          //   .then((s) => {
-          //     res.send(s);
-          //   })
-          //   .catch((e) => {
-          //     res.status(404).send({ error: "error" });
-          //     console.log(e);
-          //   });
-          await compute(
-            filepath.replace("secid", secid),
+          await computeFromURL(
+            simulationURL.replace("secid", secid),
             date,
             days,
             investment
@@ -49,6 +34,19 @@ export default async (req, res, next) => {
               res.status(404).send({ error: "error" });
               console.log(e);
             });
+          // await compute(
+          //   filepath.replace("secid", secid),
+          //   date,
+          //   days,
+          //   investment
+          // )
+          //   .then((s) => {
+          //     res.send(s);
+          //   })
+          //   .catch((e) => {
+          //     res.status(404).send({ error: "error" });
+          //     console.log(e);
+          //   });
         } else {
           res.status(404).send({ error: "error" });
         }
@@ -86,26 +84,26 @@ const compute = async (filepath, date, days, investment) => {
               if (data["invest"] === "True") {
                 if (invested == false) {
                   if (investment < parseFloat(data["close"])) {
-                    response.push({
-                      investment: "not enough",
-                    });
+                    response.push({});
                   } else {
                     shares = Math.floor(investment / parseFloat(data["close"]));
                     invested = true;
                     response.push({
-                      investment: investment,
+                      investment: investment.toFixed(3),
                       entrydate: data["date"],
                       shares: shares,
                       close: parseFloat(data["close"]),
                     });
+                    investment =
+                      investment - shares * parseFloat(data["close"]);
                   }
                 }
               }
               if (data["exit"] === "True") {
                 if (invested) {
-                  investment = parseFloat(data["close"]) * shares;
+                  investment = investment + parseFloat(data["close"]) * shares;
                   response.push({
-                    investment: investment,
+                    investment: investment.toFixed(3),
                     exitdate: data["date"],
                     shares: shares,
                     close: parseFloat(data["close"]),
@@ -115,10 +113,11 @@ const compute = async (filepath, date, days, investment) => {
               }
               if (num == days) {
                 if (invested) {
+                  investment = investment + parseFloat(data["close"]) * shares;
                   investment = parseFloat(data["close"]) * shares;
                   invested = false;
                   response.push({
-                    investment: investment,
+                    investment: investment.toFixed(3),
                     exitdate: data["date"],
                     shares: shares,
                     close: parseFloat(data["close"]),
@@ -134,7 +133,7 @@ const compute = async (filepath, date, days, investment) => {
               investment = parseFloat(enddata["close"]) * shares;
               invested = false;
               response.push({
-                profit: investment,
+                profit: investment.toFixed(3),
                 exitdate: enddata["date"],
                 shares: shares,
                 close: parseFloat(data["close"]),
@@ -189,29 +188,32 @@ const computeFromURL = async (simulationURL, date, days, investment) => {
                 num = num + 1;
                 if (data[investindex] === "True") {
                   if (invested == false) {
-                    if (investment < parseFloat(data["close"])) {
+                    if (investment < parseFloat(data[closeindex])) {
                       response.push({
-                        investment: "not enough",
+                        // investment: "not enough",
                       });
                     } else {
                       shares = Math.floor(
-                        investment / parseFloat(data["close"])
+                        investment / parseFloat(data[closeindex])
                       );
                       invested = true;
                       response.push({
-                        investment: investment,
-                        entrydate: data["date"],
+                        investment: investment.toFixed(3),
+                        entrydate: data[dateindex],
                         shares: shares,
-                        close: parseFloat(data["close"]),
+                        close: parseFloat(data[closeindex]),
                       });
+                      investment =
+                        investment + parseFloat(data[closeindex]) * shares;
                     }
                   }
                 }
                 if (data[exitindex] === "True") {
                   if (invested) {
-                    investment = parseFloat(data[closeindex]) * shares;
+                    investment =
+                      investment + parseFloat(data[closeindex]) * shares;
                     response.push({
-                      investment: investment,
+                      investment: investment.toFixed(3),
                       exitdate: data[dateindex],
                       shares: shares,
                     });
@@ -220,30 +222,33 @@ const computeFromURL = async (simulationURL, date, days, investment) => {
                 }
                 if (num == days) {
                   if (invested) {
-                    investment = parseFloat(data[closeindex]) * shares;
+                    investment =
+                      investment + parseFloat(data[closeindex]) * shares;
                     invested = false;
                     response.push({
-                      investment: investment,
+                      investment: investment.toFixed(3),
                       exitdate: data[dateindex],
                       shares: shares,
+                      close: parseFloat(data[closeindex]),
                     });
                   }
                   break;
                 }
-              }
-              if (i == rows.length - 1) {
-                if (invested) {
-                  investment = parseFloat(data[closeindex]) * shares;
-                  response.push({
-                    investment: investment,
-                    exitdate: data[dateindex],
-                    shares: shares,
-                  });
-                  invested = false;
+                if (i == rows.length - 1) {
+                  if (invested) {
+                    investment =
+                      investment + parseFloat(data[closeindex]) * shares;
+                    response.push({
+                      investment: investment.toFixed(3),
+                      exitdate: data[dateindex],
+                      shares: shares,
+                      close: parseFloat(data[closeindex]),
+                    });
+                    invested = false;
+                  }
                 }
               }
             }
-
             resolve(response);
           } else {
             reject({});
