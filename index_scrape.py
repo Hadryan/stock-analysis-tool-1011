@@ -203,8 +203,7 @@ def download_index():
         res["% YTD"] = ((res.head(1)['Close'].values[0]/res["Close"])-1)*100
         os.remove(os.path.join(path, "CSVForDate.csv"))
         res.to_csv(os.path.join(path, "Index.csv"), index=None)
-        res[::-1].to_csv(os.path.join(path, "sp500.csv"), index=None)
-        return res
+        res.iloc[::-1].to_csv(os.path.join(path, "sp500.csv"), index=None)
     except:
         traceback.print_exc()
 
