@@ -1,8 +1,11 @@
 import React from "react";
-import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Button, Chip, Grid, Typography } from "@material-ui/core";
+import { Button, Chip, Grid, Typography, TextField } from "@material-ui/core";
 import axios from "axios";
+import Loader from "react-loader-spinner";
+
+import { DataGrid } from "@material-ui/data-grid";
+
 class Simulation extends React.Component {
   constructor(props) {
     super(props);
@@ -187,6 +190,8 @@ class Simulation extends React.Component {
       investment: 1,
       startdate: "2017-03-10",
       response: [],
+      cols: [],
+      loading: false,
     };
   }
 
@@ -207,11 +212,24 @@ class Simulation extends React.Component {
       "&" +
       "date=" +
       this.state.startdate;
+    this.setState({ loading: true });
     axios
       .get("/api/simulation?" + params)
       .then((s) => {
         if (s.status === 200) {
-          this.setState({ response: s.data }, () => {});
+          let cols = [];
+          Object.keys(s.data[0]).map((key) => {
+            cols.push({ field: key, headerName: key, width: 150 });
+          });
+          for (let i = 0; i < s.data.length; i++) {
+            s.data[i]["id"] = i;
+          }
+          this.setState(
+            { response: s.data, cols: cols, loading: false },
+            () => {}
+          );
+        } else {
+          this.setState({ loading: false }, () => {});
         }
       })
       .catch((e) => {
@@ -310,23 +328,18 @@ class Simulation extends React.Component {
             </Button>
           </Grid>
         </Grid>
-        {this.state.response.map((row) => {
-          return (
-            <div>
-              {Object.keys(row).map((key) => {
-                let res = key + " : " + row[key];
-                return (
-                  <Chip
-                    color="primary"
-                    variant="outlined"
-                    label={res}
-                    style={{ margin: "5px" }}
-                  />
-                );
-              })}
-            </div>
-          );
-        })}
+        {this.state.loading ? (
+          <Loader />
+        ) : (
+          this.state.response.length !== 0 && (
+            <DataGrid
+              rows={this.state.response}
+              columns={this.state.cols}
+              autoHeight
+              autoPageSize
+            />
+          )
+        )}
       </React.Fragment>
     );
   }

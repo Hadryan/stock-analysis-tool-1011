@@ -39,11 +39,10 @@ class Top extends React.Component {
           });
         }
         companyStockDetails = companyStockDetails.slice(0, num);
-        console.log(companyStockDetails);
         let topCompanies = [];
         for (let index = 0; index < companyStockDetails.length; index++) {
           const element = companyStockDetails[index];
-          topCompanies.push(element["company"]);
+          topCompanies.push(element["Company"]);
         }
         this.setState({ topCompanies: topCompanies, loading: false }, () => {});
       } else {

@@ -10,36 +10,24 @@ export default async (req, res, next) => {
     let company = req.query["company"];
     if (company === undefined) {
       axios
-        .get(companywithidURL)
-        .then((s) => {
-          if (s.status === 200) {
-            const companywithid = underscore.invert(s.data);
-            axios
-              .get(previousdaystockdetailsURL)
-              .then((t) => {
-                if (t.status === 200) {
-                  let previousdaystockdetails = [];
-                  let rows = t.data.split("\n");
-                  const header = rows[0].split(",");
-                  for (let i = 1; i < rows.length; i++) {
-                    const row = rows[i];
-                    const cols = row.split(",");
-                    var result = cols.reduce(function (result, field, index) {
-                      result[
-                        header[index].replace(/(\r\n|\n|\r)/gm, "")
-                      ] = field.replace(/(\r\n|\n|\r)/gm, "");
-                      return result;
-                    }, {});
-                    result["company"] = companywithid[result["company"]];
-                    previousdaystockdetails.push(result);
-                  }
-                  res.send(previousdaystockdetails);
-                }
-              })
-              .catch((error) => {
-                console.log(error);
-                res.status(404).send({ error: "error" });
-              });
+        .get(previousdaystockdetailsURL)
+        .then((t) => {
+          if (t.status === 200) {
+            let previousdaystockdetails = [];
+            let rows = t.data.split("\n");
+            const header = rows[0].split(",");
+            for (let i = 1; i < rows.length; i++) {
+              const row = rows[i];
+              const cols = row.split(",");
+              var result = cols.reduce(function (result, field, index) {
+                result[
+                  header[index].replace(/(\r\n|\n|\r)/gm, "")
+                ] = field.replace(/(\r\n|\n|\r)/gm, "");
+                return result;
+              }, {});
+              previousdaystockdetails.push(result);
+            }
+            res.send(previousdaystockdetails);
           } else {
             res.status(404).send({ error: "error" });
           }

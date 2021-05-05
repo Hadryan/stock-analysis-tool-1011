@@ -90,7 +90,9 @@ const compute = async (filepath, date, days, investment) => {
                     invested = true;
                     response.push({
                       investment: investment.toFixed(3),
-                      entrydate: data["date"],
+                      invest: true,
+                      exit: false,
+                      date: data["date"],
                       shares: shares,
                       close: parseFloat(data["close"]),
                     });
@@ -104,9 +106,12 @@ const compute = async (filepath, date, days, investment) => {
                   investment = investment + parseFloat(data["close"]) * shares;
                   response.push({
                     investment: investment.toFixed(3),
-                    exitdate: data["date"],
+                    invest: false,
+                    exit: true,
+                    date: data["date"],
                     shares: shares,
                     close: parseFloat(data["close"]),
+                    investment: investment.toFixed(3),
                   });
                   invested = false;
                 }
@@ -118,9 +123,12 @@ const compute = async (filepath, date, days, investment) => {
                   invested = false;
                   response.push({
                     investment: investment.toFixed(3),
-                    exitdate: data["date"],
+                    invest: false,
+                    exit: true,
+                    date: data["date"],
                     shares: shares,
                     close: parseFloat(data["close"]),
+                    investment: investment.toFixed(3),
                   });
                 }
                 throw "reached";
@@ -133,10 +141,13 @@ const compute = async (filepath, date, days, investment) => {
               investment = parseFloat(enddata["close"]) * shares;
               invested = false;
               response.push({
-                profit: investment.toFixed(3),
-                exitdate: enddata["date"],
+                investment: investment.toFixed(3),
+                invest: false,
+                exit: true,
+                date: enddata["date"],
                 shares: shares,
-                close: parseFloat(data["close"]),
+                close: parseFloat(enddata["close"]),
+                investment: investment.toFixed(3),
               });
             }
             resolve(response);
@@ -183,7 +194,6 @@ const computeFromURL = async (simulationURL, date, days, investment) => {
               if (cur >= date) {
                 start = true;
               }
-
               if (start) {
                 num = num + 1;
                 if (data[investindex] === "True") {
@@ -199,7 +209,9 @@ const computeFromURL = async (simulationURL, date, days, investment) => {
                       invested = true;
                       response.push({
                         investment: investment.toFixed(3),
-                        entrydate: data[dateindex],
+                        invest: true,
+                        exit: false,
+                        date: data[dateindex],
                         shares: shares,
                         close: parseFloat(data[closeindex]),
                       });
@@ -214,7 +226,9 @@ const computeFromURL = async (simulationURL, date, days, investment) => {
                       investment + parseFloat(data[closeindex]) * shares;
                     response.push({
                       investment: investment.toFixed(3),
-                      exitdate: data[dateindex],
+                      invest: false,
+                      exit: true,
+                      date: data[dateindex],
                       shares: shares,
                       close: parseFloat(data[closeindex]),
                     });
@@ -228,20 +242,24 @@ const computeFromURL = async (simulationURL, date, days, investment) => {
                     invested = false;
                     response.push({
                       investment: investment.toFixed(3),
-                      exitdate: data[dateindex],
+                      invest: false,
+                      exit: true,
+                      date: data[dateindex],
                       shares: shares,
                       close: parseFloat(data[closeindex]),
                     });
                   }
                   break;
                 }
-                if (i == rows.length - 1) {
+                if (i == rows.length - 2) {
                   if (invested) {
                     investment =
                       investment + parseFloat(data[closeindex]) * shares;
                     response.push({
                       investment: investment.toFixed(3),
-                      exitdate: data[dateindex],
+                      invest: false,
+                      exit: true,
+                      date: data[dateindex],
                       shares: shares,
                       close: parseFloat(data[closeindex]),
                     });

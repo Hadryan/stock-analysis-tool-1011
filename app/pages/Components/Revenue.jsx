@@ -27,7 +27,7 @@ class Revenue extends React.Component {
         let topCompanies = [];
         for (let index = 0; index < companyStockDetails.length; index++) {
           const element = companyStockDetails[index];
-          topCompanies.push(element["company"]);
+          topCompanies.push(element["Company"]);
         }
         this.setState({ topCompanies: topCompanies, loading: false }, () => {});
       } else {
