@@ -3,6 +3,7 @@
 
 name: Daily Stock Details Work Flow
 on:
+  push:
   schedule:
     - cron: "30 15 * * *"
 jobs:
