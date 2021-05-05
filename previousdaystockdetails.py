@@ -6,17 +6,18 @@ subprocess.run(["git", "config","--global", "user.email", "saikrishna.nama@msitp
 subprocess.run(["git", "config","--global", "user.name", "saikr789"])
 subprocess.run(["git", "pull", "origin", "master"])
 
-path = os.path.join(os.getcwd(), "Data", "Stock")
-previousdaystockdetails = pd.DataFrame()
-for name in os.listdir(path):
-    try:
-        df = pd.read_csv(path+"/"+name)
-        df['company'] = name[:-4]
-        previousdaystockdetails = previousdaystockdetails.append(df.head(1))
-    except:
-        pass
+path = os.path.join(os.getcwd(), "Data")
+# previousdaystockdetails = pd.DataFrame()
+# for name in os.listdir(path):
+#     try:
+#         df = pd.read_csv(path+"/"+name)
+#         df['company'] = name[:-4]
+#         previousdaystockdetails = previousdaystockdetails.append(df.head(1))
+#     except:
+#         pass
+previousdaystockdetails = pd.read_csv(os.path.join(path,"results.csv"))
 previousdaystockdetails.to_csv(os.path.join(
-    path, "previousdaystockdetails.csv"), index=None)
+    path,"Stock", "previousdaystockdetails.csv"), index=None)
 subprocess.run(["git", "add", os.path.join(
     path, "previousdaystockdetails.csv")])
 subprocess.run(["git", "commit", "-m", "previousdaystockdetails"])
