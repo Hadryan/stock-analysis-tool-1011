@@ -8,6 +8,7 @@ import time
 import datetime
 import calendar
 import zipfile
+import json
 
 
 def download_deliverables():
@@ -35,7 +36,7 @@ def download_deliverables():
 
     deliverables_url = "https://www.bseindia.com/markets/equity/EQReports/GrossShortPos.aspx?flag=0"
 
-    path = os.path.join(os.getcwd(), "Data","Stock")
+    path = os.path.join(os.getcwd(), "Data", "Stock")
 
     def extract_save(name):
         """
@@ -117,7 +118,7 @@ def download_bhavcopy():
     extract_save : extracts the file and renames it to the specified name.
 
     """
-    path = os.path.join(os.getcwd(), "Data","Stock")
+    path = os.path.join(os.getcwd(), "Data", "Stock")
 
     bhav_copy_url = "https://www.bseindia.com/markets/MarketInfo/BhavCopy.aspx"
 
@@ -194,6 +195,9 @@ def convertBhavCopyToStock(bhav, deli):
         stock dataframe
 
     """
+    path = os.path.join(os.getcwd(), "Data", "companywithid.json")
+    ref = json.load(open(path))
+
     df = pd.DataFrame()
     bhav["DATE"] = pd.to_datetime(bhav["DATE"])
     df["Code"] = bhav["SC_CODE"]
@@ -211,11 +215,22 @@ def convertBhavCopyToStock(bhav, deli):
     df["Spread High-Low"] = bhav["HIGH"] - bhav["LOW"]
     df["Spread Close-Open"] = bhav["CLOSE"] - bhav["OPEN"]
     df["Unix Date"] = bhav["DATE"].apply(lambda x: time.mktime(x.timetuple()))
-    return df
+
+    sol = pd.DataFrame()
+    for key in ref.keys():
+        try:
+            sol = sol.append(df.loc[key])
+        except:
+            pass
+
+    sol['Code'] = sol.index
+    sol["company"] = sol["Code"].apply(lambda code: ref[code])
+
+    return sol
 
 
 def update_files():
-    path = os.path.join(os.getcwd(), "Data","Stock")
+    path = os.path.join(os.getcwd(), "Data", "Stock")
     result = pd.read_csv(os.path.join(path, "result.csv"))
     result = result.set_index("Code")
     for index, row in result.iterrows():
@@ -230,15 +245,16 @@ def update_files():
         except:
             pass
 
+
 download_deliverables()
 download_bhavcopy()
-path = os.path.join(os.getcwd(), "Data","Stock")
+path = os.path.join(os.getcwd(), "Data", "Stock")
 bhav = pd.read_csv(os.path.join(path, "bhav.csv"))
 deli = pd.read_csv(os.path.join(path, "deliverable.csv"))
 result = convertBhavCopyToStock(bhav, deli)
 result.to_csv(os.path.join(path, "result.csv"), index=None)
 update_files()
 
-previousdaystockdetails = pd.read_csv(os.path.join(path,"result.csv"))
-previousdaystockdetails.to_csv(os.path.join(path,"previousdaystockdetails.csv"), index=None)
-
+previousdaystockdetails = pd.read_csv(os.path.join(path, "result.csv"))
+previousdaystockdetails.to_csv(os.path.join(
+    path, "previousdaystockdetails.csv"), index=None)
