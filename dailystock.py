@@ -35,10 +35,7 @@ def download_deliverables():
 
     deliverables_url = "https://www.bseindia.com/markets/equity/EQReports/GrossShortPos.aspx?flag=0"
 
-    path = os.path.join(os.getcwd(), os.path.join("Data"))
-
-    if not os.path.exists(path):
-        os.makedirs("Data")
+    path = os.path.join(os.getcwd(), "Data","Stock")
 
     def extract_save(name):
         """
@@ -120,10 +117,7 @@ def download_bhavcopy():
     extract_save : extracts the file and renames it to the specified name.
 
     """
-    path = os.path.join(os.getcwd(), os.path.join("Data"))
-
-    if not os.path.exists(path):
-        os.makedirs("Data")
+    path = os.path.join(os.getcwd(), "Data","Stock")
 
     bhav_copy_url = "https://www.bseindia.com/markets/MarketInfo/BhavCopy.aspx"
 
@@ -241,7 +235,7 @@ def update_files():
 
 download_deliverables()
 download_bhavcopy()
-path = os.path.join(os.getcwd(), "Data")
+path = os.path.join(os.getcwd(), "Data","Stock")
 bhav = pd.read_csv(os.path.join(path, "bhav.csv"))
 deli = pd.read_csv(os.path.join(path, "deliverable.csv"))
 result = convertBhavCopyToStock(bhav, deli)
