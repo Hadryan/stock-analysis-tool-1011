@@ -197,7 +197,7 @@ def convertBhavCopyToStock(bhav, deli):
     """
     path = os.path.join(os.getcwd(), "Data", "companywithid.json")
     ref = json.load(open(path))
-
+    ref = {v: k for k, v in ref.items()}
     df = pd.DataFrame()
     bhav["DATE"] = pd.to_datetime(bhav["DATE"])
     df["Code"] = bhav["SC_CODE"]
@@ -217,16 +217,13 @@ def convertBhavCopyToStock(bhav, deli):
     df["Unix Date"] = bhav["DATE"].apply(lambda x: time.mktime(x.timetuple()))
     df = df.set_index("Code")
     df["Code"] = df.index
-
     sol = pd.DataFrame()
     for key in ref.keys():
         try:
             sol = sol.append(df.loc[key])
         except:
             pass
-
-    sol['Code'] = sol.index
-    sol["company"] = sol["Code"].apply(lambda code: ref[code])
+    sol["Company"] = sol["Code"].apply(lambda code: ref[code])
 
     return sol
 
@@ -248,8 +245,8 @@ def update_files():
             pass
 
 
-download_deliverables()
-download_bhavcopy()
+# download_deliverables()
+# download_bhavcopy()
 path = os.path.join(os.getcwd(), "Data", "Stock")
 bhav = pd.read_csv(os.path.join(path, "bhav.csv"))
 deli = pd.read_csv(os.path.join(path, "deliverable.csv"))
