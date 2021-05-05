@@ -3,7 +3,6 @@
 
 name: Previous Day Stock Details Work Flow
 on:
-  push:
   schedule:
     - cron: "0 0 * * *"
 jobs:
