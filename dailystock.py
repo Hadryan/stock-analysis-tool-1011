@@ -238,3 +238,7 @@ deli = pd.read_csv(os.path.join(path, "deliverable.csv"))
 result = convertBhavCopyToStock(bhav, deli)
 result.to_csv(os.path.join(path, "result.csv"), index=None)
 update_files()
+
+previousdaystockdetails = pd.read_csv(os.path.join(path,"result.csv"))
+previousdaystockdetails.to_csv(os.path.join(path,"previousdaystockdetails.csv"), index=None)
+
