@@ -53,7 +53,6 @@ def download_deliverables():
 
         res = zipfile.ZipFile(os.path.join(path, name))
         res.extractall(path)
-        time.sleep(5)
         deli = pd.read_csv(os.path.join(path, name), sep="|",
                            converters={'DATE': lambda x: str(x)})
         deli["DATE"] = deli["DATE"].apply(
@@ -75,7 +74,7 @@ def download_deliverables():
         driver.quit()
         extract_save(url.split("/")[-1])
         os.remove(os.path.join(path, name))
-        os.remove(os.path.join(path, name.replace(".zip", ".txt")))
+        os.remove(os.path.join(path, name.replace(".zip", ".TXT")))
 
     def create_driver():
         """
@@ -140,7 +139,6 @@ def download_bhavcopy():
         """
         res = zipfile.ZipFile(os.path.join(path, name))
         res.extractall(path)
-        time.sleep(5)
         today = datetime.datetime.strptime(str(name[2:-8]), "%d%m%y").date()
         bhav = pd.read_csv(os.path.join(path, name[:8]+".csv"))
         bhav["DATE"] = today
