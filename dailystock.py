@@ -53,6 +53,7 @@ def download_deliverables():
 
         res = zipfile.ZipFile(os.path.join(path, name))
         res.extractall(path)
+        time.sleep(5)
         deli = pd.read_csv(os.path.join(path, name), sep="|",
                            converters={'DATE': lambda x: str(x)})
         deli["DATE"] = deli["DATE"].apply(
@@ -139,6 +140,7 @@ def download_bhavcopy():
         """
         res = zipfile.ZipFile(os.path.join(path, name))
         res.extractall(path)
+        time.sleep(5)
         today = datetime.datetime.strptime(str(name[2:-8]), "%d%m%y").date()
         bhav = pd.read_csv(os.path.join(path, name[:8]+".csv"))
         bhav["DATE"] = today
@@ -224,7 +226,7 @@ def update_files():
     path = os.path.join(os.getcwd(), os.path.join("Data"))
     result = pd.read_csv(os.path.join(path, "result.csv"))
     result = result.set_index("Code")
-    stockpath = os.path(path, "Stock")
+    stockpath = os.path.join(path, "Stock")
     for index, row in result.iterrows():
         try:
             if os.path.exists(os.path.join(stockpath, str(index)+".csv")):
