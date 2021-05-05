@@ -53,7 +53,6 @@ def download_deliverables():
 
         res = zipfile.ZipFile(os.path.join(path, name))
         res.extractall(path)
-        print(os.listdir(path))
         deli = pd.read_csv(os.path.join(path, name), sep="|",
                            converters={'DATE': lambda x: str(x)})
         deli["DATE"] = deli["DATE"].apply(
@@ -140,9 +139,8 @@ def download_bhavcopy():
         """
         res = zipfile.ZipFile(os.path.join(path, name))
         res.extractall(path)
-        print(os.listdir(path))
         today = datetime.datetime.strptime(str(name[2:-8]), "%d%m%y").date()
-        bhav = pd.read_csv(os.path.join(path, name[:8]+".csv"))
+        bhav = pd.read_csv(os.path.join(path, name[:8]+".CSV"))
         bhav["DATE"] = today
         bhav.to_csv(os.path.join(path, "bhav.csv"), index=None)
         os.remove(os.path.join(path, name[:8]+".csv"))
