@@ -143,7 +143,7 @@ def download_bhavcopy():
         bhav = pd.read_csv(os.path.join(path, name[:8]+".CSV"))
         bhav["DATE"] = today
         bhav.to_csv(os.path.join(path, "bhav.csv"), index=None)
-        os.remove(os.path.join(path, name[:8]+".csv"))
+        os.remove(os.path.join(path, name[:8]+".CSV"))
 
     def download():
         """
