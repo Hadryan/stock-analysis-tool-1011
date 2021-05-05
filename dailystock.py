@@ -200,7 +200,7 @@ def convertBhavCopyToStock(bhav, deli):
     ref = {v: k for k, v in ref.items()}
     df = pd.DataFrame()
     bhav["DATE"] = pd.to_datetime(bhav["DATE"])
-    df["Code"] = bhav["SC_CODE"]
+    df["Code"] = bhav["SC_CODE"].apply(lambda code: int(code))
     df["Date"] = bhav["DATE"].iloc[0]
     df["Open Price"] = bhav["OPEN"]
     df["High Price"] = bhav["HIGH"]
@@ -245,15 +245,16 @@ def update_files():
             pass
 
 
-# download_deliverables()
-# download_bhavcopy()
+download_deliverables()
+download_bhavcopy()
 path = os.path.join(os.getcwd(), "Data", "Stock")
 bhav = pd.read_csv(os.path.join(path, "bhav.csv"))
 deli = pd.read_csv(os.path.join(path, "deliverable.csv"))
 result = convertBhavCopyToStock(bhav, deli)
 result.to_csv(os.path.join(path, "result.csv"), index=None)
+result.to_csv(os.path.join(path, "previousdaystockdetails.csv"), index=None)
 update_files()
 
-previousdaystockdetails = pd.read_csv(os.path.join(path, "result.csv"))
-previousdaystockdetails.to_csv(os.path.join(
-    path, "previousdaystockdetails.csv"), index=None)
+# previousdaystockdetails = pd.read_csv(os.path.join(path, "result.csv"))
+# previousdaystockdetails.to_csv(os.path.join(
+# path, "previousdaystockdetails.csv"), index=None)
