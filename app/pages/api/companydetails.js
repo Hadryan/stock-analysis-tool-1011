@@ -1,7 +1,6 @@
 const axios = require("axios");
 export default (req, res, next) => {
   try {
-    console.log(req.url, req.query);
     let company = req.query["company"];
     const companydetailsURL =
       "https://raw.githubusercontent.com/saikr789/stock-analysis-tool-1011/master/Data/companies.json";

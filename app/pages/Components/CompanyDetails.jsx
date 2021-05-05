@@ -58,7 +58,11 @@ class CompanyDetails extends React.Component {
 
   getCompanyDetails = async (company) => {
     await axios.get("/api/companydetails?company=" + company).then((s) => {
-      this.setState({ companyDetails: s.data }, () => {});
+      if (s.status === 200) {
+        this.setState({ companyDetails: s.data, loading: false }, () => {});
+      } else {
+        this.setState({ companyDetails: [], loading: false }, () => {});
+      }
     });
     await axios
       .get("/api/previousdaystockdetails?company=" + company)

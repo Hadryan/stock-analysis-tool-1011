@@ -62,10 +62,11 @@ export default async (req, res, next) => {
                 if (t.status === 200) {
                   let rows = t.data.split("\n");
                   const header = rows[0].split(",");
+                  const codeindex = header.indexOf("Code");
                   for (let i = 0; i < rows.length; i++) {
                     const row = rows[i];
                     const cols = row.split(",");
-                    if (parseInt(cols[cols.length - 1]) === code) {
+                    if (parseInt(cols[codeindex]) === code) {
                       var result = cols.reduce(function (result, field, index) {
                         result[
                           header[index].replace(/(\r\n|\n|\r)/gm, "")
