@@ -3,6 +3,7 @@
 
 name: Previous Day Stock Details Work Flow
 on:
+  push:
   schedule:
     - cron: "0 0 * * *"
 jobs:
@@ -30,5 +31,5 @@ jobs:
       run: |
         git pull origin master
         git add Data/Stock
-        git commit -m "previousdaystockdetails.py"
+        git commit -m "previousdaystockdetails"
         git push origin master
