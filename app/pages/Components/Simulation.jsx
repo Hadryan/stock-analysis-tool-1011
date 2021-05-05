@@ -4,7 +4,11 @@ import { Button, Chip, Grid, Typography, TextField } from "@material-ui/core";
 import axios from "axios";
 import Loader from "react-loader-spinner";
 
-import { DataGrid } from "@material-ui/data-grid";
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarExport,
+} from "@material-ui/data-grid";
 
 class Simulation extends React.Component {
   constructor(props) {
@@ -200,6 +204,9 @@ class Simulation extends React.Component {
   };
 
   onClickSubmit = () => {
+    if (this.state.selectedCompany === "") {
+      return;
+    }
     const params =
       "company=" +
       this.state.selectedCompany +
@@ -217,24 +224,43 @@ class Simulation extends React.Component {
       .get("/api/simulation?" + params)
       .then((s) => {
         if (s.status === 200) {
-          let cols = [];
-          Object.keys(s.data[0]).map((key) => {
-            cols.push({ field: key, headerName: key, width: 150 });
-          });
-          for (let i = 0; i < s.data.length; i++) {
-            s.data[i]["id"] = i;
+          let resp = s.data;
+          if (resp.length != 0) {
+            let cols = [];
+            Object.keys(resp[0]).map((key) => {
+              cols.push({ field: key, headerName: key, width: 150 });
+            });
+            let rows = [];
+            for (let i = 0; i < resp.length; i++) {
+              if (Object.keys(resp[i]).length === 0) {
+              } else {
+                resp[i]["id"] = i;
+                rows.push(resp[i]);
+              }
+            }
+            this.setState(
+              { response: rows, cols: cols, loading: false },
+              () => {}
+            );
+          } else {
+            this.setState({ loading: false }, () => {});
           }
-          this.setState(
-            { response: s.data, cols: cols, loading: false },
-            () => {}
-          );
         } else {
           this.setState({ loading: false }, () => {});
         }
       })
       .catch((e) => {
         console.log(e);
+        this.setState({ loading: false }, () => {});
       });
+  };
+
+  exportToCSV = () => {
+    return (
+      <GridToolbarContainer>
+        <GridToolbarExport />
+      </GridToolbarContainer>
+    );
   };
 
   render() {
@@ -336,7 +362,12 @@ class Simulation extends React.Component {
               rows={this.state.response}
               columns={this.state.cols}
               autoHeight
-              autoPageSize
+              disableSelectionOnClick
+              hideFooterPagination
+              hideFooter
+              components={{
+                Toolbar: this.exportToCSV,
+              }}
             />
           )
         )}

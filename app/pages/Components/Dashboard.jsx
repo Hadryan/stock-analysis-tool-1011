@@ -150,8 +150,10 @@ class Dashboard extends React.Component {
               this.setState({ details: [], loading: false }, () => {});
             }
           })
-          .then(() => {})
-          .catch((e) => {});
+          .catch((e) => {
+            console.log(e);
+            this.setState({ loading: false, error: true }, () => {});
+          });
       });
     }
   };

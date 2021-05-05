@@ -75,6 +75,7 @@ class CompanyDetails extends React.Component {
       })
       .catch((e) => {
         console.log(e);
+        this.setState({ stockdetails: [], loading: false }, () => {});
       });
   };
 

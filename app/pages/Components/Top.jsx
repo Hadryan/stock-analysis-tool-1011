@@ -26,29 +26,38 @@ class Top extends React.Component {
     const { num, type } = match.params;
     this.setState({ num: num, type: type, loading: true }, () => {});
 
-    axios.get("/api/previousdaystockdetails").then((s) => {
-      if (s.status === 200) {
-        let companyStockDetails = s.data;
-        if (type === "sell") {
-          companyStockDetails.sort((a, b) => {
-            return a["Close Price"] - b["Close Price"];
-          });
-        } else if (type === "buy") {
-          companyStockDetails.sort((a, b) => {
-            return b["Close Price"] - a["Close Price"];
-          });
+    axios
+      .get("/api/previousdaystockdetails")
+      .then((s) => {
+        if (s.status === 200) {
+          let companyStockDetails = s.data;
+          if (type === "sell") {
+            companyStockDetails.sort((a, b) => {
+              return a["Close Price"] - b["Close Price"];
+            });
+          } else if (type === "buy") {
+            companyStockDetails.sort((a, b) => {
+              return b["Close Price"] - a["Close Price"];
+            });
+          }
+          companyStockDetails = companyStockDetails.slice(0, num);
+          let topCompanies = [];
+          for (let index = 0; index < companyStockDetails.length; index++) {
+            const element = companyStockDetails[index];
+            topCompanies.push(element["Company"]);
+          }
+          this.setState(
+            { topCompanies: topCompanies, loading: false },
+            () => {}
+          );
+        } else {
+          this.setState({ topCompanies: [], loading: false }, () => {});
         }
-        companyStockDetails = companyStockDetails.slice(0, num);
-        let topCompanies = [];
-        for (let index = 0; index < companyStockDetails.length; index++) {
-          const element = companyStockDetails[index];
-          topCompanies.push(element["Company"]);
-        }
-        this.setState({ topCompanies: topCompanies, loading: false }, () => {});
-      } else {
+      })
+      .catch((e) => {
+        console.log(e);
         this.setState({ topCompanies: [], loading: false }, () => {});
-      }
-    });
+      });
   };
 
   render() {

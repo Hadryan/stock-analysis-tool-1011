@@ -70,7 +70,10 @@ class Comparision extends React.Component {
           this.setState({ companyNames: s.data }, () => {});
         }
       })
-      .catch((e) => console.log(e));
+      .catch((e) => {
+        console.log(e);
+        this.setState({ stockdetails: [], loading: false }, () => {});
+      });
   };
 
   onClickSubmit = async () => {

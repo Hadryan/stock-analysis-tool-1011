@@ -17,23 +17,32 @@ class Revenue extends React.Component {
 
   componentDidMount = () => {
     console.log("Revenue");
-    axios.get("/api/previousdaystockdetails").then((s) => {
-      if (s.status === 200) {
-        let companyStockDetails = s.data;
-        companyStockDetails.sort((a, b) => {
-          return a["Revenue"] - b["Revenue"];
-        });
-        companyStockDetails = companyStockDetails.slice(0, this.state.num);
-        let topCompanies = [];
-        for (let index = 0; index < companyStockDetails.length; index++) {
-          const element = companyStockDetails[index];
-          topCompanies.push(element["Company"]);
+    axios
+      .get("/api/previousdaystockdetails")
+      .then((s) => {
+        if (s.status === 200) {
+          let companyStockDetails = s.data;
+          companyStockDetails.sort((a, b) => {
+            return a["Revenue"] - b["Revenue"];
+          });
+          companyStockDetails = companyStockDetails.slice(0, this.state.num);
+          let topCompanies = [];
+          for (let index = 0; index < companyStockDetails.length; index++) {
+            const element = companyStockDetails[index];
+            topCompanies.push(element["Company"]);
+          }
+          this.setState(
+            { topCompanies: topCompanies, loading: false },
+            () => {}
+          );
+        } else {
+          this.setState({ topCompanies: [], loading: false }, () => {});
         }
-        this.setState({ topCompanies: topCompanies, loading: false }, () => {});
-      } else {
+      })
+      .catch((e) => {
+        console.log(e);
         this.setState({ topCompanies: [], loading: false }, () => {});
-      }
-    });
+      });
   };
 
   render() {
