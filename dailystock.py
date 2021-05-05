@@ -215,23 +215,20 @@ def convertBhavCopyToStock(bhav, deli):
 
 
 def update_files():
-    path = os.path.join(os.getcwd(), os.path.join("Data"))
+    path = os.path.join(os.getcwd(), "Data","Stock")
     result = pd.read_csv(os.path.join(path, "result.csv"))
     result = result.set_index("Code")
-    stockpath = os.path.join(path, "Stock")
     for index, row in result.iterrows():
         try:
-            if os.path.exists(os.path.join(stockpath, str(index)+".csv")):
-                stk = pd.read_csv(os.path.join(stockpath, str(index)+".csv"))
+            if os.path.exists(os.path.join(path, str(index)+".csv")):
+                stk = pd.read_csv(os.path.join(path, str(index)+".csv"))
                 stk.loc[len(stk.index)] = row
                 stk["Date"] = pd.to_datetime(stk["Date"])
                 stk = stk.drop_duplicates(subset=["Date"], keep="first")
                 stk = stk.sort_values(by=["Date"], ascending=[False])
-                stk.to_csv(os.path.join(
-                    stockpath, str(index)+".csv"), index=None)
+                stk.to_csv(os.path.join(path, str(index)+".csv"), index=None)
         except:
             pass
-
 
 download_deliverables()
 download_bhavcopy()
