@@ -215,6 +215,8 @@ def convertBhavCopyToStock(bhav, deli):
     df["Spread High-Low"] = bhav["HIGH"] - bhav["LOW"]
     df["Spread Close-Open"] = bhav["CLOSE"] - bhav["OPEN"]
     df["Unix Date"] = bhav["DATE"].apply(lambda x: time.mktime(x.timetuple()))
+    df = df.set_index("Code")
+    df["Code"] = df.index
 
     sol = pd.DataFrame()
     for key in ref.keys():
