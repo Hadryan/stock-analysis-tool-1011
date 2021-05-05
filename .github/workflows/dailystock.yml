@@ -3,6 +3,7 @@
 
 name: Daily Stock Details Work Flow
 on:
+  push:
   schedule:
     - cron: "30 15 * * *"
 jobs:
@@ -22,6 +23,7 @@ jobs:
     - name: Run Daily Stock Scrape
       run: |
         python dailystock.py
+        python previousdaystockdetails.py
     - name: Setup Github Config
       run: |
         git config --global user.name "saikr789"
