@@ -3,7 +3,6 @@
 
 name: Index and Risk Free Rate Scrape Work Flow
 on:
-  push:
   schedule:
     - cron: "30 12 * * *"
 jobs:
