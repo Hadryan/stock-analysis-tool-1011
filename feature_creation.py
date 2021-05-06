@@ -15,21 +15,17 @@ if not os.path.exists(path):
 
 path = os.path.join(os.getcwd(), os.path.join("Data"))
 
+
 def drop_duplicate_rows(df):
     """
     Drops the duplicate rows in the dataframe based on Date column.
-
     Parameters
     ----------
-
     df : dataframe
-
     Returns
     -------
-
     df: dataframe
         updated dataframe after droping duplicates.
-
     """
     df = df.drop_duplicates(subset=["Date"], keep="first")
     return df
@@ -38,18 +34,13 @@ def drop_duplicate_rows(df):
 def fill_with_previous_values(df):
     """
     Fills the null values in the dataframe with the values from the previous row.
-
     Parameters
     ----------
-
     df : dataframe
-
     Returns
     -------
-
     df : dataframe
         updated dataframe after filling with previous values.
-
     """
     df.fillna(method="ffill", inplace=True)
     return df
@@ -57,27 +48,19 @@ def fill_with_previous_values(df):
 
 def add_missing_rows(df, ind):
     """
-
     Adds rows to the stock dataframe.
-
     If the date is present in index dataframe an not present in stock dataframe,
     then a new row (as date and NAN values) is added to stock dataframe.
-
     Parameters
     ----------
-
     df : dataframe
         stock dataframe
-
     ind : dataframe
         index dataframe
-
     Returns
     -------
-
     df : dataframe
         updated dataframe after adding new rows.
-
     """
 
     df.Date = pd.to_datetime(df.Date)
@@ -103,22 +86,16 @@ def add_missing_rows(df, ind):
 def cleaning(df, ind):
     """
     Removes duplicate rows, Adds missing rows, fills null values from pervious row to the stock dataframe.
-
     Parameters
     ----------
-
     df : dataframe
         stock dataframe
-
     ind : dataframe
         index dataframe
-
     Returns
     -------
-
     df : dataframe
         updated dataframe after performing all the operations.
-
     """
 
     df = drop_duplicate_rows(df)
@@ -130,29 +107,22 @@ def cleaning(df, ind):
     df = df.sort_values(by=["Date"], ascending=[False])
     return df, ind
 
+
 def bonus_issue(stock, start_date, end_date, r1, r2):
     """
     For an r1:r2 bonus shares,
     if y is the stock value before the bonus share issue,
     then the value of the stock will be y*(r2/(r1+r2)),
     for the data between the given dates.
-
     Parameters
     ----------
-
     stock : dataframe
-
     start_date : datetime
-
     end_date : datetime
-
     r1 : integer
-
     r2 : integer
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe after bonus
     """
@@ -177,23 +147,15 @@ def stock_split(stock, start_date, end_date, r1, r2):
     For an r1:r2 stock split, if y is the stock value before the split,
     then the value of the stock will be y*(r1/r2),
     for the data between the given dates.
-
     Parameters
     ----------
-
     stock : dataframe
-
     start_date : datetime
-
     end_date : datetime
-
     r1 : integer
-
     r2 : integer
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe after splitting
     """
@@ -220,20 +182,14 @@ def stock_split(stock, start_date, end_date, r1, r2):
 def create_dividend(stock, corporate):
     """
     Creates new Dividend Value column in the stock dataframe.
-
     Parameters
     ----------
-
     corporate : dataframe
-
     stock : dataframe
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe with dividend column
-
     """
     corporate['Ex Date'] = pd.to_datetime(
         corporate['Ex Date'], errors='coerce')
@@ -278,32 +234,21 @@ def create_dividend(stock, corporate):
 def apply_corporate_actions(stock, corporate):
     """
     Applies stock split and bonus on the given stock dataset.
-
     creates bonus dataframe and invoke bonus_issue method.
-
     creates split dataframe and invoke stock_split method.
-
     creates dividend value Column in Stock dataframe by invoking create_dividend method.
-
     Parameters
     ----------
-
     stock : dataframe
-
     corporate : dataframe
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe after stock split and bonus and dividend.
-
     Methods
     -------
-    stock_split : 
-
+    stock_split :
     bonus_issue :
-
     """
     stock["Date"] = pd.to_datetime(stock["Date"])
     corporate["Ex Date"] = pd.to_datetime(
@@ -338,27 +283,17 @@ def apply_corporate_actions(stock, corporate):
 
 def calculate_beta(stock, ind):
     """
-
     Creates a new Beta column in the stock dataframe
-
     beta = covariance(X, Y)/var(Y)
-
     X = %returns of company
-
     Y = %returns of sp500
-
     %returns of company = ((Close Price of today / Close Price of previous trading day) - 1) * 100
-
     %returns of sp500 = from new Index dataframe. (% Return)
-
     Parameters
     ----------
-
     stock : dataframe
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe with new Beta column
     """
@@ -376,7 +311,19 @@ def calculate_beta(stock, ind):
     ind.drop(['Open', 'High', 'Low', '% YTD'], axis=1, inplace=True)
     ind["Date"] = pd.to_datetime(ind["Date"])
     stock["Date"] = pd.to_datetime(stock["Date"])
-    stock = pd.merge(stock, ind, on="Date", how="left")
+
+    inddf = ind[ind.Date.between(
+        stock.iloc[-1]['Date'], stock.iloc[0]['Date'])]
+    inddf = inddf.set_index("Date")
+    stock = stock.set_index("Date")
+
+    for date, row in inddf.iterrows():
+        stock.loc[date, 'Close Price of SP500'] = row['Close Price of SP500']
+        stock.loc[date, '% Return of SP500'] = row['% Return of SP500']
+
+    stock = stock.reset_index()
+    inddf = inddf.reset_index()
+    # stock = pd.merge(stock, ind, on="Date", how="left")
 
     sp500 = stock["% Return of SP500"]
     company = stock["% Return of Company"]
@@ -392,27 +339,20 @@ def calculate_beta(stock, ind):
     return stock
 
 
-def add_risk_free_column(stock):
+def add_risk_free_column(stock, riskrates):
     """
-
     Creates a new Rate column in the stock dataframe using riskfreerate file.
-
     Parameters
     ----------
-
     stock : dataframe
-
-
     Returns
     -------
-
     res : dataframe
         updated dataframe with Rate column
-
     """
     # path = os.path.join(os.getcwd(), "Data")
 
-    riskrates = pd.read_csv(os.path.join(path, "RiskFreeRate.csv"))
+    # riskrates = pd.read_csv(os.path.join(path, "RiskFreeRate.csv"))
     riskrates["Date"] = pd.to_datetime(riskrates["Date"])
     stock["Date"] = pd.to_datetime(stock["Date"])
     # riskrates["Rate"] = pd.to_numeric(riskrates["Rate"])
@@ -420,35 +360,35 @@ def add_risk_free_column(stock):
         str)).apply(pd.to_numeric, errors='coerce')
     # stock[direct_columns] = (stock[direct_columns].astype(
     #     str)).apply(pd.to_numeric, errors='coerce')
-    res = pd.merge(stock, riskrates, on="Date", how="left")
-    return res
+
+    resdf = riskrates[riskrates.Date.between(
+        stock.iloc[-1]['Date'], stock.iloc[0]['Date'])]
+    resdf = resdf.set_index("Date")
+    stock = stock.set_index("Date")
+
+    for date, row in resdf.iterrows():
+        stock.loc[date, 'Rate'] = row['Rate']
+
+    stock = stock.reset_index()
+    resdf = resdf.reset_index()
+
+    return stock
 
 
 def calculate_alpha(stock, ind):
     """
-
     Creates a new Alpha column in the stock dataframe
-
     alpha = %YTDCompany - (riskfreerate + (Beta * (%YTDSP500 - riskfreerate)))
-
     %YTDCompany = percentage of year to date of the company
-
     %YTDSP500 = percentage of year to date of the index file.(%YTD)
-
     Beta = beta value from calculate_beta method.
-
     %YTDCompany = ((Close Price of last available day / Close Price of today) - 1) * 100
-
-    riskfreerate : 
-
+    riskfreerate :
     Parameters
     ----------
-
     stock : dataframe
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe with new Alpha column
     """
@@ -466,7 +406,19 @@ def calculate_alpha(stock, ind):
     ind.rename(columns={'% YTD': '% YTD of SP500'}, inplace=True)
     ind["Date"] = pd.to_datetime(ind["Date"])
     stock["Date"] = pd.to_datetime(stock["Date"])
-    stock = pd.merge(stock, ind, on="Date", how="left")
+
+    inddf = ind[ind.Date.between(
+        stock.iloc[-1]['Date'], stock.iloc[0]['Date'])]
+    ind = ind.set_index("Date")
+    stock = stock.set_index("Date")
+
+    for date, row in ind.iterrows():
+        stock.loc[date, '% YTD of SP500'] = row['% YTD of SP500']
+
+    stock = stock.reset_index()
+    ind = ind.reset_index()
+
+    # stock = pd.merge(stock, ind, on="Date", how="left")
     # stock["Beta"] = pd.to_numeric(stock["Beta"], errors='coerce')
     stock["Beta"] = (stock["Beta"].astype(
         str)).apply(pd.to_numeric, errors='coerce')
@@ -478,18 +430,13 @@ def calculate_alpha(stock, ind):
 def create_lower_band(stock):
     """
     Creates new lower band column in the stock dataframe.
-
     Parameters
     ----------
-
     stock : dataframe
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe with lower band column
-
     """
 
     # sorted_data = pd.DataFrame()
@@ -514,18 +461,13 @@ def create_lower_band(stock):
 def create_upper_band(stock):
     """
     Creates new upper band column in the stock dataframe.
-
     Parameters
     ----------
-
     stock : dataframe
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe with upper band column
-
     """
     # sorted_data = pd.DataFrame()
     # sorted_data["Date"] = stock["Date"]
@@ -548,18 +490,13 @@ def create_upper_band(stock):
 def calculate_band_area(stock):
     """
     Creates new band area column in the stock dataframe.
-
     Parameters
     ----------
-
     stock : dataframe
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe with band area column
-
     """
     # stock["Upper Band"] = pd.to_numeric(stock["Upper Band"])
     # stock["Lower Band"] = pd.to_numeric(stock["Lower Band"])
@@ -571,20 +508,14 @@ def calculate_band_area(stock):
 
 def create_lower_upper_bands(stock):
     """
-
     Creates lower band, upper band, band area columns in the stock dataframe.
-
     Parameters
     ----------
-
     stock : dataframe
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe with lower, upper, band area columns
-
     """
     stock["Lower Band"] = ""
     stock["Upper Band"] = ""
@@ -602,21 +533,15 @@ def create_lower_upper_bands(stock):
 def create_eps_pe_ratio_revenue_income_expenditure_net_profit(rev, stk):
     """
     Creates eps, pe, revenue, income, expenditure, profit columns.
-
     Creates 2,4,8 bands for eps, pe, revenue, income, expenditure, profit columns.
-
     Parameters
     ----------
-
     rev : dataframe
         revenue dataframe
-
     stk : dataframe
         stock dataframe
-
     Returns
     -------
-
     stk : dataframe
         updated dataframe after creating the columns.
     """
@@ -665,15 +590,11 @@ def create_eps_pe_ratio_revenue_income_expenditure_net_profit(rev, stk):
 def add_next_day_columns(stock):
     """
     Creates new Next Day columns in the stock dataframe.
-
     Parameters
     ----------
-
     stock : dataframe
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe with Next Day columns.
     """
@@ -694,23 +615,16 @@ growth_direct_rate_columns = [col + " GR" for col in direct_columns]
 def find_gain_loss(stock):
     """
     Creates new growth rate columns in the stock dataframe.
-
     Growth rate = (X-Y)/Y
-
     X = value of today
     Y = value of the previous trading day
-
     Parameters
     ----------
-
     stock : dataframe
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe with newly created columns.
-
     """
     direct_columns = ['Open Price', 'High Price', 'Low Price', 'Close Price', 'Next Day Open Price', 'Next Day High Price', 'Next Day Low Price', 'Next Day Close Price', 'WAP',
                       'No.of Shares', 'No. of Trades', 'Total Turnover (Rs.)', 'Deliverable Quantity', '% Deli. Qty to Traded Qty', 'Spread High-Low', 'Spread Close-Open', 'Alpha', 'Beta']
@@ -731,15 +645,11 @@ def find_gain_loss(stock):
 def sequential_increase(stock):
     """
     Creates new Sequential Increase column in the stock dataframe.
-
     Parameters
     ----------
-
     stock : dataframe
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe with newly created column.
     """
@@ -761,15 +671,11 @@ def sequential_increase(stock):
 def sequential_decrease(stock):
     """
     Creates new Sequential Decrease column in the stock dataframe.
-
     Parameters
     ----------
-
     stock : dataframe
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe with newly created column.
     """
@@ -791,15 +697,11 @@ def sequential_decrease(stock):
 def sequential_increase_percentage(stock):
     """
     Creates new Sequential Increase % column in the stock dataframe.
-
     Parameters
     ----------
-
     stock : dataframe
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe with newly created column.
     """
@@ -821,15 +723,11 @@ def sequential_increase_percentage(stock):
 def sequential_decrease_percentage(stock):
     """
     Creates new Sequential Decrease % column in the stock dataframe.
-
     Parameters
     ----------
-
     stock : dataframe
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe with newly created column.
     """
@@ -851,19 +749,13 @@ def sequential_decrease_percentage(stock):
 def max_min_avg_of_sequential_data(stock):
     """
     Creates lists for increasing and decreasing % for Sequential Increase and Sequential Decrease columns dataframe.
-
     Parameters
     ----------
-
     stock : dataframe
-
     Returns
     -------
-
     seq_inc_list : list
-
     seq_dec_list : list
-
     """
     index_start = stock.first_valid_index()
     seq_inc_days = stock.at[index_start, "Sequential Increase"]
@@ -884,18 +776,13 @@ def sequential_increase_decrease(stock):
     """
     Creates new max, min, avg columns for Sequential Increase and Sequential Decrease columns 
     with 90, 180, 365 bands in stock dataframe.
-
     Parameters
     ----------
-
     stock : dataframe
-
     Returns
     -------
     stock : dataframe
-
         updated dataframe with newly created column.
-
     """
     bands = [90, 180, 365]
     for b in bands:
@@ -922,21 +809,14 @@ cols = ["Revenue", "Dividend Value", "Income",
 
 def generate_dictionary_for_quarterwise_data(stock, columnName):
     """
-
     generates a dictionary for the given column quaterwise.
-
     Parameters
     ----------
-
     stock : dataframe
-
     columnName : string
-
     Returns
     -------
-
     result : dictionary
-
     """
     result = {}
     stock.Date = pd.to_datetime(stock.Date)
@@ -961,21 +841,14 @@ def generate_dictionary_for_quarterwise_data(stock, columnName):
 
 def generate_dictionary_for_quarterwise_growthrate_data(data):
     """
-
     generates a dictionary for quater wise growth rate.
-
     Parameters
     ----------
-
     data : dictionary
-
     columnName : string
-
     Returns
     -------
-
     gr_dic : dictionary
-
     """
     gr_dic = {}
     keys = list(data.keys())
@@ -1023,22 +896,15 @@ def generate_dictionary_for_quarterwise_growthrate_data(data):
 
 def update_growthrate_for_quarterwise_data(gr_dic, stock, columnName):
     """
-
     generates a dictionary for the given column quaterwise.
-
     Parameters
     ----------
     gr_dic : dictionary
-
     stock : dataframe
-
     columnName : string
-
     Returns
     --------
-
     stock : dataframe
-
     """
     for i in range(0, stock.shape[0]-1):
         date = stock.at[i, "Date"]
@@ -1052,21 +918,14 @@ def update_growthrate_for_quarterwise_data(gr_dic, stock, columnName):
 
 def quarter_wise_growthrate(stock, columnName):
     """
-
     Creates new Growth Rate column in the stock dataframe.
-
     Parameters
     ----------
-
     stock : dataframe
-
     columnName : string
-
     Returns
     --------
-
     stock : dataframe
-
     """
     dic = generate_dictionary_for_quarterwise_data(stock, columnName)
     gr_dic = generate_dictionary_for_quarterwise_growthrate_data(dic)
@@ -1106,13 +965,14 @@ def close_price_as_percent_of_LV_HV_BA(stock):
         bcols = ["CP % LV "+str(b)+" days", "CP % HV " +
                  str(b)+" days", "CP % BA "+str(b)+" days"]
         stock[bcols] = pd.DataFrame([[0]*len(bcols)], index=stock.index)
-        for i in range(stock.shape[0]):
-            s = i+1
-            specific_bands = stock.iloc[-(s):-(s+b+1):-1]
-            low = specific_bands["Close Price"].min()
-            high = specific_bands["Close Price"].max()
-            today = stock.iloc[-(s)]["Close Price"]
-            stock.loc[specific_bands.index, bcols] = [
+        for i, row in stock.iterrows():
+            start = row['Date']
+            end = start - datetime.timedelta(days=b)
+            specific_dates = stock[stock.Date.between(end, start)]
+            low = specific_dates["Close Price"].min()
+            high = specific_dates["Close Price"].max()
+            today = row["Close Price"]
+            stock.loc[specific_dates.index, bcols] = [
                 today/low, today/high, today/(high-low)]
     return stock
 
@@ -1122,18 +982,13 @@ def create_new_LB_UB(stock):
     Creates new growth rate columns in the stock dataframe.
     Previous and Next ,Lower Band, Upper Band for 
     for 30,90,180,360,720,1080 days
-
     Lower Lower = Close Price of that day/min close price in the band
     Upper Band = Close Price of that day/max close price in the band
-
     Parameters
     ----------
-
     stock : dataframe
-
     Returns
     -------
-
     stock : dataframe
         updated dataframe with newly created columns.
     """
@@ -1166,24 +1021,30 @@ def create_new_LB_UB(stock):
             stock.loc[index, ncols] = [low/today, high/today]
     return stock
 
+
 def perform_operation(security_code):
     try:
         security_code = str(security_code)
         print(security_code)
-        index_df = pd.read_csv(os.path.join(path,"Index.csv"))
-        corporate_df = pd.read_csv(os.path.join(path,"CorporateActions/"+security_code+".csv"))
-        revenue_df = pd.read_csv(os.path.join(path,"Revenue/"+security_code+".csv"))
-        stock_df = pd.read_csv(os.path.join(path,"Stock/"+security_code+".csv"))
-        stock_df,index_df = cleaning(stock_df,index_df)
-        stock_df = apply_corporate_actions(stock_df,corporate_df)
-        stock_df = calculate_beta(stock_df,index_df)
+        index_df = pd.read_csv(os.path.join(path, "Index.csv"))
+        corporate_df = pd.read_csv(os.path.join(
+            path, "CorporateActions/"+security_code+".csv"))
+        revenue_df = pd.read_csv(os.path.join(
+            path, "Revenue/"+security_code+".csv"))
+        stock_df = pd.read_csv(os.path.join(
+            path, "Stock/"+security_code+".csv"))
+        stock_df, index_df = cleaning(stock_df, index_df)
+        stock_df = apply_corporate_actions(stock_df, corporate_df)
+        stock_df = calculate_beta(stock_df, index_df)
         stock_df = add_risk_free_column(stock_df)
-        stock_df = calculate_alpha(stock_df,index_df)
+        stock_df = calculate_alpha(stock_df, index_df)
         stock_df = create_lower_upper_bands(stock_df)
         stock_df = create_new_LB_UB(stock_df)
-        stock_df = create_eps_pe_ratio_revenue_income_expenditure_net_profit(revenue_df,stock_df)
+        stock_df = create_eps_pe_ratio_revenue_income_expenditure_net_profit(
+            revenue_df, stock_df)
         stock_df = add_next_day_columns(stock_df)
-        stock_df[direct_columns] = stock_df[direct_columns].apply(pd.to_numeric,errors="coerce")
+        stock_df[direct_columns] = stock_df[direct_columns].apply(
+            pd.to_numeric, errors="coerce")
         stock_df = find_gain_loss(stock_df)
         stock_df = sequential_increase(stock_df)
         stock_df = sequential_decrease(stock_df)
@@ -1196,20 +1057,7 @@ def perform_operation(security_code):
             except Exception as e:
                 traceback.print_exc()
         stock_df = close_price_as_percent_of_LV_HV_BA(stock_df)
-        stock_df.to_csv(os.path.join(path,"GRStock/"+"gr"+str(security_code)+".csv"),index=None)
-    except :
+        stock_df.to_csv(os.path.join(path, "GRStock/"+"gr" +
+                        str(security_code)+".csv"), index=None)
+    except:
         traceback.print_exc()
-        
-df = pd.read_csv("companies.csv")
-security_codes = df["Security Code"].values.tolist()
-
-pool = ThreadPool(multiprocessing.cpu_count())
-
-try:
-    pool.map(perform_operation,security_codes)
-except:
-    traceback.print_exc()
-    
-
-
-
