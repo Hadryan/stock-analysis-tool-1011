@@ -231,6 +231,7 @@ def convertBhavCopyToStock(bhav, deli):
 def update_files():
     path = os.path.join(os.getcwd(), "Data", "Stock")
     result = pd.read_csv(os.path.join(path, "result.csv"))
+    result["Code"] = result["Code"].apply(lambda x: int(x))
     result = result.set_index("Code")
     for index, row in result.iterrows():
         try:
